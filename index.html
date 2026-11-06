@@ -19,8 +19,17 @@ canvas#c{display:block}
 #typebox{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);display:none;pointer-events:auto;text-align:center}
 #typebox input{font-size:34px;font-weight:800;letter-spacing:6px;text-transform:uppercase;text-align:center;width:230px;padding:8px;border-radius:10px;border:3px solid #ffd54a;background:rgba(0,0,0,.75);color:#fff;outline:none}
 #typebox small{display:block;margin-top:4px;text-shadow:0 1px 3px #000}
-#ov{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;text-align:center}
-#ov .card{max-width:520px;padding:24px}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;text-align:center}
+#ov .card{max-width:520px;padding:24px;margin:auto}
+#ov .btns{position:sticky;bottom:0;padding:12px 0 6px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.88) 35%)}
+#ov details{margin:8px 0;text-align:left;font-size:14px;line-height:1.45}
+#ov summary{cursor:pointer;font-weight:700;text-align:center;color:#ffd54a}
+#ov details p{margin:6px 0}
+#rotHint{display:none;font-weight:700;color:#ffd54a}
+#rot{position:absolute;left:50%;top:56px;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:6px 12px;border-radius:8px;font-size:13px;display:none;white-space:nowrap}
+body.touch #deskHint{display:none}
+@media (orientation:portrait){ body.touch #rotHint{display:block} body.touch #rot{display:block} }
+@media (max-height:480px){ #ov h1{font-size:24px;margin:0 0 6px} #ov p{font-size:13px;line-height:1.35;margin:6px 0} #ov .card{padding:12px 20px} #ov button{padding:10px 26px;font-size:18px;margin-top:6px} }
 #ov h1{margin:0 0 10px;font-size:34px}
 #ov p{line-height:1.5;margin:8px 0}
 #ov button{margin-top:14px;font-size:20px;font-weight:700;padding:12px 30px;border:0;border-radius:10px;background:#ffd54a;cursor:pointer}
@@ -35,7 +44,7 @@ body.touch #touch{display:block}
 #btnType{right:24px;bottom:calc(6px + env(safe-area-inset-bottom,0px));width:92px;height:92px;font-size:16px;background:rgba(255,213,74,.92)}
 #btnSpec{right:24px;bottom:calc(6px + env(safe-area-inset-bottom,0px));width:92px;height:92px;font-size:14px;background:rgba(200,220,255,.92);display:none}
 #typeBtns{display:none;margin-top:8px}
-#typeBtns button{font-size:18px;font-weight:700;padding:8px 22px;margin:0 6px;border:0;border-radius:8px;background:#ffd54a}
+#typeBtns button{font-size:21px;font-weight:700;padding:9px 25px;margin:0 6px;border:0;border-radius:8px;background:#ffd54a}
 #ovRestart{display:none;margin-left:10px;background:#ff8a80}
 #btnExit{position:absolute;left:12px;top:182px;pointer-events:auto;border:0;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:700;background:rgba(0,0,0,.55);color:#fff}
 body.touch #btnExit{top:132px}
@@ -44,15 +53,34 @@ body.touch #btnExit{top:132px}
 #btnZoom{right:110px;top:70px;width:64px;height:64px;background:rgba(200,230,255,.92)}
 #btnCrouch{right:24px;top:50%;margin-top:-38px}
 body.touch #feed{right:200px}
+#btnJump{right:126px;bottom:calc(14px + env(safe-area-inset-bottom,0px));width:80px;height:80px;font-size:14px;background:rgba(190,235,190,.92);display:none}
 .tbtn.on{background:#7CFC00 !important}
 #scope{position:absolute;inset:0;display:none}
 #scope .ring{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 0,transparent 36vmin,rgba(0,0,0,.95) 36.6vmin)}
 #scope .lbl{position:absolute;left:50%;top:calc(50% + 31vmin);transform:translateX(-50%);font-weight:800;text-shadow:0 1px 3px #000}
 #stance{position:absolute;left:50%;bottom:46px;transform:translateX(-50%);font-size:14px;font-weight:700;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:8px;display:none;white-space:nowrap}
+#feed .dead{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#ff6b6b}
+#feed .dead.admin{text-decoration-color:#ffd54a}
+#wallwarn{position:absolute;left:50%;top:30%;transform:translateX(-50%);display:none;background:rgba(200,30,20,.88);padding:8px 16px;border-radius:10px;font-weight:800;text-align:center;max-width:90vw}
+#slots{display:none;gap:8px;justify-content:center;margin-bottom:6px}
+#slots span{width:51px;height:58px;line-height:51px;font-size:35px;font-weight:800;border:3px solid #ffd54a;border-radius:10px;background:rgba(0,0,0,.75);color:#fff;box-sizing:border-box;text-align:center}
+#slots span.on{box-shadow:0 0 0 2px #fff inset}
+#kbd{display:none;margin:8px auto 0;width:max-content;grid-template-columns:repeat(4,52px);grid-template-rows:repeat(4,46px);gap:5px}
+.key{font-size:26px;font-weight:800;border:0;border-radius:9px;background:rgba(255,255,255,.9);color:#111;padding:0;touch-action:manipulation}
+.key.zero{grid-column:1 / span 3;grid-row:4}
+.key.del{grid-column:4;grid-row:1;background:#ff8a80}
+.key.cancel{grid-column:4;grid-row:2;background:#9aa4ad;font-size:15px;width:68%;height:68%;justify-self:center;align-self:center;border-radius:7px}   /* cùng hình dạng, thu nhỏ, nằm giữa ô -> xa các nút khác hơn */
+.key.send{grid-column:4;grid-row:3 / span 2;background:#ffd54a;font-size:19px}
+.key.dim{opacity:.28}
+body.touch #slots{display:flex}
+body.touch #kbd{display:grid}
+body.touch #inp{display:none}
+body.touch #typebox{background:rgba(0,0,0,.4);padding:8px;border-radius:12px}
+@media (max-height:420px){ #kbd{grid-template-rows:repeat(4,42px);grid-template-columns:repeat(4,50px)} #slots span{width:48px;height:48px;line-height:42px;font-size:30px} }
 #touchHint{display:none}
 body.touch #touchHint{display:block}
 body.touch #hint{display:none}
-body.touch #typeBtns{display:block}
+body.touch #typeBtns{display:none}
 body.touch #typebox{bottom:auto;top:10%}
 body.touch #mini{width:110px;height:110px}
 body.touch #typebox small{display:none}
@@ -66,11 +94,13 @@ body.touch #typebox small{display:none}
   <div id="feed"></div>
   <div id="scope"><div class="ring"></div><div class="lbl" id="zlbl"></div></div>
   <div id="cross"></div>
-  <div id="stance">🧎 Đang ngồi – đi bộ sẽ im lặng</div>
+  <div id="rot">📱 Xoay ngang điện thoại để chơi</div>
+  <div id="stance">🧎 Đang ngồi – di chuyển sẽ im lặng</div>
   <div id="banner"></div>
+  <div id="wallwarn"></div>
   <div id="msg"></div>
-  <div id="typebox"><input id="inp" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="send"><small>Enter = gửi · Esc = hủy · (đứng yên khi đang gõ!)</small><div id="typeBtns"><button id="sendBtn">Gửi</button><button id="cancelBtn">Hủy</button></div></div>
-  <div id="hint">WASD đi · Shift chạy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Chuột nhìn · Enter gõ tên · Space đổi người xem (khi đã bị loại) · Esc menu</div>
+  <div id="typebox"><div id="slots"></div><input id="inp" maxlength="4" autocomplete="off" inputmode="numeric" pattern="[0-9]*" autocorrect="off" spellcheck="false" enterkeyhint="send"><small>Enter = gửi · Esc = hủy · (đứng yên khi đang gõ!)</small><div id="typeBtns"><button id="sendBtn">Gửi</button><button id="cancelBtn">Hủy</button></div><div id="kbd"></div></div>
+  <div id="hint">WASD đi · Shift chạy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Chuột nhìn · Enter gõ tên · Space nhảy (khi bị loại: đổi người xem) · Esc menu</div>
 </div>
 <div id="touch">
   <div id="joyBase"><div id="joyKnob"></div></div>
@@ -79,16 +109,20 @@ body.touch #typebox small{display:none}
   <button id="btnCrouch" class="tbtn">NGỒI</button>
   <button id="btnScope" class="tbtn">ỐNG DÒM</button>
   <button id="btnZoom" class="tbtn">ZOOM ×8</button>
+  <button id="btnJump" class="tbtn">NHẢY</button>
   <button id="btnExit">⟲ Menu</button>
 </div>
 <div id="ov">
   <div class="card">
     <h1 id="ovTitle">TÊN TRÊN TRÁN</h1>
-    <p id="ovText">Mỗi người có một bảng tên dán trên trán – bạn không thấy tên của chính mình, nhưng người khác thì thấy.<br>
-    <b>Gõ đúng tên</b> của đối thủ để loại họ. Ai bị gõ đúng tên là thua. Gõ sai sẽ bị khóa bàn phím vài giây.<br>
-    Hãy nấp sau cây, đá, thùng, tường, nhà… và đừng quay mặt về phía kẻ địch!<br>Tường thấp chỉ che được khi bạn <b>ngồi</b> (phím C) – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> (phím B bật/tắt, lăn chuột để đổi mức zoom) để đọc tên từ xa.</p>
-    <p id="touchHint">📱 <b>Cảm ứng:</b> chạm nửa trái màn hình để hiện cần gạt di chuyển (gạt xa là chạy) · kéo ngón tay ở nửa phải để nhìn quanh và nhìn lên/xuống · bấm nút <b>GÕ TÊN</b> khi thấy bảng tên của đối thủ · nút <b>NGỒI</b> (đi khi ngồi sẽ không có tiếng bước chân) · nút <b>ỐNG DÒM</b> (bật ống dòm; khi đang dùng thì bấm <b>THOÁT</b> để tắt, nút <b>ZOOM</b> để đổi mức phóng đại). Nên xoay ngang điện thoại.</p>
-    <button id="ovBtn">Bắt đầu</button><button id="ovRestart">Chơi lại ván mới</button>
+    <p id="ovText">Mỗi người có một bảng tên dán trên trán – bạn không thấy tên của mình, nhưng người khác thì thấy. <b>Gõ đúng tên</b> đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
+    <p id="rotHint">📱 Hãy xoay ngang điện thoại để chơi</p>
+    <details id="howto"><summary>Cách chơi &amp; điều khiển</summary>
+      <p>Tên trên trán gồm <b>4 chữ số</b> (ví dụ 4729, 0583). Gõ sai tên sẽ bị khóa bàn phím vài giây. Quay mặt vào tường quá 15 giây sẽ bị cảnh báo, quá 30 giây sẽ bị <b>Admin</b> loại. Tường thấp chỉ che được khi bạn <b>ngồi</b> – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> để đọc tên từ xa. Có vài bậc thang thùng và bục đá có thể <b>nhảy</b> lên để quan sát từ trên cao, nhưng ở trên đó ai cũng dễ thấy bạn hơn. Radar nhỏ ở góc trái chấm đỏ khi có người ở gần (người đang ngồi thì không hiện).</p>
+      <p id="deskHint"><b>Máy tính:</b> WASD đi · Shift chạy · Space nhảy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Enter gõ tên · Esc menu.</p>
+      <p id="touchHint">📱 <b>Cảm ứng:</b> chạm nửa trái màn hình để hiện cần gạt di chuyển (gạt xa là chạy) · kéo ngón tay ở nửa phải để nhìn quanh · nút <b>GÕ TÊN</b> khi thấy bảng tên đối thủ · <b>NHẢY</b> · <b>NGỒI</b> · <b>ỐNG DÒM</b> (bật; bấm <b>THOÁT</b> để tắt, <b>ZOOM</b> để đổi mức).</p>
+    </details>
+    <div class="btns"><button id="ovBtn">Bắt đầu</button><button id="ovRestart">Chơi lại ván mới</button></div>
   </div>
 </div>
 
@@ -105,15 +139,19 @@ const CFG = {
   READ_RANGE: 16,        // xa nhất có thể đọc được bảng tên (m)
   READ_TIME: 1.0,        // thời gian bot cần để đọc + gõ tên (giây)
   GUESS_COOLDOWN: 2.0,   // bị khóa bàn phím khi gõ sai (giây)
-  WALK: 5, RUN: 8.5,
-  BOT_WALK: 3.8, BOT_RUN: 6.8,
+  WALK: 3.75, RUN: 6.4,      // đã giảm 25%
+  BOT_WALK: 2.85, BOT_RUN: 5.1,
+  STEP_MIN: 1.65, RUN_MIN: 4.65,   // ngưỡng tốc độ để có tiếng bước / tiếng chạy
   R: 0.4,                // bán kính va chạm nhân vật
   EYE: 1.55, EYE_C: 1.0,  // độ cao mắt khi đứng / ngồi
   TAG: 1.48, TAG_C: 0.98, // độ cao bảng tên khi đứng / ngồi
-  CROUCH: 2.3             // tốc độ đi khi ngồi
+  CROUCH: 1.7,            // tốc độ đi khi ngồi
+  WALL_WARN: 15, WALL_KILL: 30, WALL_DIST: 1.6,   // quay mặt vào tường: 15s cảnh báo, 30s bị Admin loại
+  GRAV: 15, JUMP: 5.8     // nhảy cao ~1.1m: lên được bục 0.9m, không lên được tường thấp 1.25m
 };
 const COS_FOV = Math.cos(50 * Math.PI / 180);      // bot nhìn trong nón 50° mới đọc được
 const COS_TAGFACE = Math.cos(60 * Math.PI / 180);  // bảng tên phải hướng về người đọc trong 60°
+const DEATH_VIEW = 1.6;   // giây nhìn cảnh mình ngã rồi mới chuyển sang camera trên cao
 const ZOOM_FOV = [70, 26, 10], ZOOM_LBL = ['', '×3', '×8'];  // ống dòm: 3 mức (tắt / ×3 / ×8)
 
 /* ================== RNG CÓ SEED ================== */
@@ -122,6 +160,7 @@ const rnd = mulberry32(CFG.SEED);
 const rr = (a,b) => a + (b-a)*rnd();
 const rand = (a,b) => a + (b-a)*Math.random();
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const ease = x => 1-(1-x)*(1-x), smooth = x => x*x*(3-2*x);
 
 /* ================== THREE.JS ================== */
 const canvas = document.getElementById('c');
@@ -173,10 +212,10 @@ function place(br, fn){
 function reg(x,z,br){ placed.push({x,z,br}); }
 const SAND=[0xcfae7a,0xc49a62,0xd8bc8c,0xb98d58,0xdcc296,0xc2a070];
 const pickC=()=>SAND[Math.floor(rnd()*SAND.length)];
-const ROOF=0x8f6f48;
+const ROOF=0x8f6f48, roofMeshes=[];
 function roofSlab(x,z,hw,hd,y,color){
   const m=new THREE.Mesh(new THREE.BoxGeometry(hw*2,0.35,hd*2),mat(color));
-  m.position.set(x,y+0.17,z); scene.add(m);
+  m.position.set(x,y+0.17,z); scene.add(m); roofMeshes.push(m);
 }
 // Nhà khối đặc (không vào được)
 function building(x,z,hw,hd,h,color){
@@ -264,6 +303,17 @@ function lowWall(x,z,hw,hd){
   const c=new THREE.Mesh(new THREE.BoxGeometry(hw*2+0.15,0.12,hd*2+0.15),mat(0x8f6f48)); c.position.set(x,LOW_H+0.06,z); scene.add(c);
 }
 
+// Bậc thang bằng thùng: 3 bậc cao 0.9 / 1.8 / 2.7m, mỗi bậc nhảy lên được từ bậc dưới
+function stairs(x,z,alongX,sign){
+  const cols=[0xb08a50,0xa07a40,0x946d36], hs=[0.9,1.8,2.7], hw=[0.9,0.9,1.4];
+  let off=-sign*3.2;
+  for (let i=0;i<3;i++){
+    const w=hw[i], c=off+sign*w;
+    if (alongX) addBox(x+c,z,w,w,hs[i],cols[i]); else addBox(x,z+c,w,w,hs[i],cols[i]);
+    off+=sign*w*2;
+  }
+}
+
 function buildMap(){
   const H=CFG.HALF;
   // Tường thành bao quanh
@@ -319,6 +369,8 @@ function buildMap(){
   for (let i=0;i<26;i++){ const hl=rr(1.6,3.2), horiz=rnd()<0.5;                                 // tường thấp: phải ngồi mới được che
     place(hl+0.5,(x,z)=> horiz ? lowWall(x,z,hl,0.3) : lowWall(x,z,0.3,hl)); }
   for (let i=0;i<14;i++) place(1.3,(x,z)=>lowWall(x,z,0.9,0.9));                                // thùng thấp
+  for (let i=0;i<6;i++) place(4.4,(x,z)=>stairs(x,z,rnd()<0.5,rnd()<0.5?1:-1));                // bậc thang thùng: nhảy lên được
+  for (let i=0;i<12;i++) place(1.9,(x,z)=>addBox(x,z,1.4,0.7,0.9,0xb89a62));                     // bục đá thấp 0.9m: nhảy lên được
   for (let i=0;i<24;i++){ const s=rr(1.3,2.6);                                                   // đá sa thạch
     place(s+0.5,(x,z)=>{
       const m=new THREE.Mesh(new THREE.DodecahedronGeometry(s),mat(0xb38b5d,true));
@@ -366,6 +418,7 @@ function blockedAt(x,z,m){
 function resolve(p){
   const R = CFG.R;
   for (const o of obstacles){
+    if (p.y>=o.h-0.03) continue;      // đang đứng/bay phía trên vật cản này thì không va chạm ngang
     if (o.t==='c'){
       let dx=p.x-o.x, dz=p.z-o.z; const d=Math.hypot(dx,dz), mn=o.r+R;
       if (d<mn){ if(d<1e-6){dx=1;dz=0;} else {dx/=d;dz/=d;} p.x=o.x+dx*mn; p.z=o.z+dz*mn; }
@@ -384,17 +437,45 @@ function resolve(p){
   const L = CFG.HALF-R-0.5; p.x=clamp(p.x,-L,L); p.z=clamp(p.z,-L,L);
 }
 function move(p,dx,dz){ p.x+=dx; p.z+=dz; resolve(p); }
+// Mặt sàn dưới chân: vật cản có đỉnh thấp hơn hoặc ngang chân thì đứng lên được
+function floorAt(x,z,y){
+  let f=0;
+  for (const o of obstacles){
+    if (o.border||o.h>y+0.05||o.h<=f) continue;
+    if (o.t==='c' ? Math.hypot(x-o.x,z-o.z)<o.r+0.15 : (Math.abs(x-o.x)<o.hw+0.15&&Math.abs(z-o.z)<o.hd+0.15)) f=o.h;
+  }
+  return f;
+}
+function physics(p,dt){
+  const fl=floorAt(p.x,p.z,p.y);
+  if (p.vy>0||p.y>fl+1e-4){
+    p.vy-=CFG.GRAV*dt; p.y+=p.vy*dt;
+    if (p.vy<=0&&p.y<=fl){ const imp=-p.vy; p.y=fl; p.vy=0; if (imp>4.5) landed(p); }
+  } else { p.y=fl; p.vy=0; }
+  p.grounded=(p.vy===0&&p.y<=fl+1e-4);
+}
+function noiseEvent(p,r){
+  for (const b of players){ if (b===p||!b.alive||b.human) continue; if (dist(b,p)<r) b.heard={x:p.x,z:p.z,t:1.5}; }
+}
+function landed(p){ landSound(p); noiseEvent(p,30); }   // nghe được từ xa: người chơi trong ~65m, bot trong 30m
 
 /* ================== NHÂN VẬT ================== */
+// Tên = 4 chữ số (vd 4729). Bỏ các số quá dễ đoán: 0000, 1111, 1234, 4321...
 function genName(used){
-  const C='BCDGHKMNPRSTVXZ', V='AEOU', pick=s=>s[Math.floor(Math.random()*s.length)];
-  for(;;){ let n=pick(C)+pick(V)+pick(C); if(Math.random()<0.5) n+=pick(V); if(!used.has(n)){used.add(n);return n;} }
+  for(;;){
+    const n=String(Math.floor(Math.random()*10000)).padStart(4,'0');
+    const d=[...n].map(Number);
+    const same=d.every(x=>x===d[0]);
+    const run=d.every((x,i)=>i===0||x-d[i-1]===1)||d.every((x,i)=>i===0||d[i-1]-x===1);
+    if (same||run||used.has(n)) continue;
+    used.add(n); return n;
+  }
 }
 function makeTagTexture(name){
   const c=document.createElement('canvas'); c.width=512; c.height=192;
   const g=c.getContext('2d'); g.fillStyle='#fffbe6'; g.fillRect(0,0,512,192);
   g.lineWidth=12; g.strokeStyle='#111'; g.strokeRect(6,6,500,180);
-  g.fillStyle='#111'; g.font='bold 130px Arial, sans-serif'; g.textAlign='center'; g.textBaseline='middle';
+  g.fillStyle='#111'; g.font='bold 118px Arial, sans-serif'; g.textAlign='center'; g.textBaseline='middle';
   g.fillText(name,256,102);
   const t=new THREE.CanvasTexture(c); t.anisotropy=8; return t;
 }
@@ -423,7 +504,7 @@ const isTouch = !!(window.matchMedia && matchMedia('(hover: none) and (pointer: 
 if (isTouch) document.body.classList.add('touch');
 const joy={on:false,id:null,cx:0,cy:0,x:0,y:0}, look={id:null,x:0,y:0};
 const $=id=>document.getElementById(id);
-const elAlive=$('alive'), elFeed=$('feed'), elMsg=$('msg'), elBanner=$('banner'), elType=$('typebox'), inp=$('inp');
+const elAlive=$('alive'), elFeed=$('feed'), elMsg=$('msg'), elBanner=$('banner'), elType=$('typebox'), inp=$('inp'), elWall=$('wallwarn');
 const ov=$('ov'), ovTitle=$('ovTitle'), ovText=$('ovText'), ovBtn=$('ovBtn'), ovRestart=$('ovRestart');
 
 function spawnOk(x,z,spawns){
@@ -446,10 +527,11 @@ function newRound(){
     players.push(Object.assign({
       id:i, name, human:i===0, alive:true, x, z, h:Math.random()*Math.PI*2, deathT:0,
       read:{}, mode:'roam', think:Math.random(), goal:null, pause:0, scan:0, stuck:0, stuckT:0, lastX:x, lastZ:z,
-      target:null, threatPos:null, crouch:false, ck:0, spd:0, px:x, pz:z, stepD:0, heard:null, running:false, aggr:0.3+Math.random()*0.6, readNeed:CFG.READ_TIME*(0.8+Math.random()*0.6)
+      target:null, threatPos:null, crouch:false, y:0, vy:0, grounded:true, wallT:0, ck:0, spd:0, px:x, pz:z, stepD:0, heard:null, running:false, aggr:0.3+Math.random()*0.6, readNeed:CFG.READ_TIME*(0.8+Math.random()*0.6)
     }, ch));
   }
   human=players[0];
+  wallWarned=false; elWall.style.display='none';
   updateAlive();
 }
 
@@ -459,9 +541,28 @@ function angDiff(a,b){let d=b-a;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+
 function turnTo(p,target,rate,dt){const d=angDiff(p.h,target);p.h+=Math.sign(d)*Math.min(Math.abs(d),rate*dt);}
 
 const isCr=p=>p.ck>0.5;                                  // đang ngồi (tính theo hoạt ảnh)
-const eyeH=p=>isCr(p)?CFG.EYE_C:CFG.EYE;
-const tagH=p=>isCr(p)?CFG.TAG_C:CFG.TAG;
-const noiseR=p=>(p.spd>2.2&&!p.crouch)?(p.running?18:9):0;   // bán kính tiếng động (ngồi = 0)
+const eyeH=p=>p.y+(isCr(p)?CFG.EYE_C:CFG.EYE);
+const tagH=p=>p.y+(isCr(p)?CFG.TAG_C:CFG.TAG);
+const ADMIN={name:'Admin',admin:true};
+// Úp mặt vào tường (bảng tên hướng vào vật cản trong 1.6m): không ai đọc được tên nên bị coi là trốn
+function facingWall(p){
+  const y=tagH(p);
+  for (const a of [-0.35,0,0.35]){
+    const dx=Math.sin(p.h+a)*CFG.WALL_DIST, dz=Math.cos(p.h+a)*CFG.WALL_DIST;
+    if (los(p.x,p.z,p.x+dx,p.z+dz,y,y)) return false;
+  }
+  return true;
+}
+let wallWarned=false;
+function updateWallWarn(){
+  const t=(human.alive&&!over)?human.wallT:0;
+  if (t>=CFG.WALL_WARN){
+    if (!wallWarned){ wallWarned=true; sfx('ping'); }
+    elWall.textContent=`⚠ Bạn đang quay mặt vào tường – còn ${Math.max(1,Math.ceil(CFG.WALL_KILL-t))} giây sẽ bị Admin loại!`;
+    elWall.style.display='block';
+  } else { wallWarned=false; elWall.style.display='none'; }
+}
+const noiseR=p=>(p.spd>CFG.STEP_MIN&&!p.crouch&&p.grounded)?(p.running?18:9):0;   // bán kính tiếng động (ngồi = 0)
 // r có đọc được bảng tên của t không? (t nằm trong tầm nhìn của r, bảng tên t hướng về r, không bị chắn)
 function canRead(r,t,range){
   const dx=t.x-r.x, dz=t.z-r.z, d=Math.hypot(dx,dz);
@@ -586,10 +687,12 @@ const label=p=>p.human?'BẠN':p.name;
 function eliminate(v,k){
   if (!v.alive||over) return;
   v.alive=false; v.deathT=0; v.tag.visible=false; v.body.material.color.set(0x777777);
-  const row=document.createElement('div'); row.textContent=`${label(k)} ➜ ${label(v)}`; elFeed.appendChild(row);
+  if (v===human) sfx('lose'); else if (k===human) sfx('win');
+  const row=document.createElement('div'), nm=document.createElement('span'); nm.className='dead'+(k&&k.admin?' admin':''); nm.textContent=label(v); row.appendChild(nm); elFeed.appendChild(row);
   setTimeout(()=>row.remove(),7000);
   if (v===human){
-    zoom=0; banner(`Bạn bị loại bởi ${k.name}!  (tên trên trán bạn là ${v.name})`);
+    zoom=0; closeType();                       // bị hạ: đóng ô gõ tên ngay
+    banner(k&&k.admin ? `Bạn bị Admin loại vì quay mặt vào tường quá lâu!  (tên trên trán bạn là ${v.name})` : `Bạn đã bị loại!  (tên trên trán bạn là ${v.name})`);
     pickSpectate();
   }
   updateAlive();
@@ -605,7 +708,7 @@ function banner(t){ elBanner.textContent=t; elBanner.style.display='block'; }
 let msgTimer=0;
 function flash(t,c){ elMsg.textContent=t; elMsg.style.color=c||'#fff'; clearTimeout(msgTimer); msgTimer=setTimeout(()=>elMsg.textContent='',2200); }
 function endGame(w){
-  over=true; paused=false; ovRestart.style.display='none'; closeType(); resetTouch();
+  over=true; paused=false; ovRestart.style.display='none'; closeType(); resetTouch(); $('howto').style.display='none';
   if (document.exitPointerLock) document.exitPointerLock();
   ovTitle.textContent = w===human ? '🏆 BẠN THẮNG!' : (w ? `${w.name} thắng` : 'Hòa');
   ovText.textContent = w===human ? 'Bạn là người cuối cùng còn trụ lại.' : (human.alive ? '' : `Tên trên trán bạn là ${human.name}.`);
@@ -613,21 +716,65 @@ function endGame(w){
 }
 
 /* ================== NHẬP TÊN ================== */
+let tbuf='';
+const elSlots=$('slots'), elKbd=$('kbd');
+function renderSlots(){
+  let h='';
+  for (let i=0;i<4;i++) h+=`<span class="${i===tbuf.length?'on':''}">${tbuf[i]||''}</span>`;
+  elSlots.innerHTML=h;
+}
+// Chỉ nhận chữ số, tối đa 4. Phím không hợp lệ bị làm mờ và bỏ qua
+const badKey=(ch,pos)=>pos>=4||!/^[0-9]$/.test(ch);
+function updateKbd(){
+  const pos=tbuf.length;
+  for (const b of elKbd.querySelectorAll('.key')){
+    const ch=b.dataset.k;
+    if (ch==='GUI'||ch==='HUY') continue;
+    b.classList.toggle('dim', ch==='⌫' ? pos===0 : badKey(ch,pos));
+  }
+}
+function setBuf(v){ tbuf=v; inp.value=v; renderSlots(); updateKbd(); }
+function keyPress(ch){
+  if (!typing) return;
+  if (ch==='GUI'){ submitGuess(); return; }
+  if (ch==='HUY'){ closeType(); return; }
+  if (ch==='⌫'){ setBuf(tbuf.slice(0,-1)); return; }
+  if (badKey(ch,tbuf.length)) return;
+  setBuf(tbuf+ch);
+}
+(function buildKbd(){
+  const mkKey=(parent,ch,label,cls)=>{ const b=document.createElement('button'); b.type='button'; b.className='key '+cls; b.textContent=label; b.dataset.k=ch; parent.appendChild(b); };
+  for (const ch of '789456123') mkKey(elKbd,ch,ch,'');
+  mkKey(elKbd,'0','0','zero');
+  mkKey(elKbd,'⌫','⌫','del'); mkKey(elKbd,'HUY','Hủy','cancel'); mkKey(elKbd,'GUI','Gửi','send');
+  elKbd.addEventListener('pointerdown',e=>{
+    const b=e.target.closest&&e.target.closest('.key'); if (!b) return;
+    e.preventDefault(); keyPress(b.dataset.k);
+  });
+  setBuf('');
+})();
 function openType(){
   if (!human.alive||over) return;
   if (cooldown>0){ flash(`Bàn phím bị khóa ${cooldown.toFixed(1)}s`,'#ff6b6b'); return; }
   typing=true; for (const k in keys) keys[k]=false; resetTouch();
-  elType.style.display='block'; inp.value=''; inp.focus();
+  elType.style.display='block'; setBuf(''); if (!isTouch) inp.focus();
 }
 function closeType(){ typing=false; elType.style.display='none'; inp.blur(); }
 function submitGuess(){
-  const v=inp.value.trim().toUpperCase(); closeType(); if (!v) return;
+  if (!human.alive||over){ closeType(); return; }     // đã bị loại thì không gửi được nữa
+  const v=tbuf.trim().toUpperCase();
+  if (!v){ closeType(); return; }
+  if (v.length<4){ flash('Tên gồm 4 chữ số, ví dụ 4729','#ffd54a'); return; }
+  closeType();
   const t=players.find(p=>p.name===v);
   if (t&&t!==human&&t.alive){ eliminate(t,human); flash(`✔ Đã loại ${t.name}`,'#7CFC00'); }
   else if (t&&t!==human&&!t.alive) flash(`${t.name} đã bị loại rồi`,'#ccc');
-  else { cooldown=CFG.GUESS_COOLDOWN; flash('✘ SAI TÊN – bị khóa bàn phím','#ff6b6b'); }
+  else { cooldown=CFG.GUESS_COOLDOWN; sfx('wrong'); flash('✘ SAI TÊN – bị khóa bàn phím','#ff6b6b'); }
 }
-inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z]/g,'');});
+inp.addEventListener('input',()=>{            // bàn phím thật: cũng chỉ nhận đúng kiểu ô
+  let v=''; for (const c of inp.value.toUpperCase()) if (!badKey(c,v.length)) v+=c;
+  setBuf(v);
+});
 inp.addEventListener('keydown',e=>{
   if (e.key==='Enter'){ e.preventDefault(); submitGuess(); }
   else if (e.key==='Escape'){ closeType(); }
@@ -638,7 +785,7 @@ const active=()=>locked||fallback;
 addEventListener('keydown',e=>{
   if (typing||!active()||over||paused) return;
   if (e.code==='Enter'){ e.preventDefault(); openType(); return; }
-  if (e.code==='Space'){ e.preventDefault(); if (!human.alive) pickSpectate(); return; }
+  if (e.code==='Space'){ e.preventDefault(); if (human.alive){ if (!e.repeat) jump(); } else pickSpectate(); return; }
   if (e.code==='KeyC'){ if (!e.repeat) toggleCrouch(); return; }
   if (e.code==='KeyB'){ if (!e.repeat) toggleScope(); return; }
   keys[e.code]=true;
@@ -658,13 +805,14 @@ document.addEventListener('pointerlockchange',()=>{
   else { closeType(); if (!over && !fallback) showPause(); }
 });
 document.addEventListener('pointerlockerror',()=>{ fallback=true; ov.style.display='none'; flash('Không khóa được chuột: giữ chuột trái và kéo để nhìn','#ffd54a'); });
+function jump(){ if (!human.alive||over||paused||typing||!human.grounded) return; human.vy=CFG.JUMP; human.grounded=false; human.crouch=false; }
 function toggleCrouch(){ if (!human.alive||over||paused) return; human.crouch=!human.crouch; }
 let zoomLast=1;   // mức zoom dùng gần nhất
 function toggleScope(){ if (!human.alive||over||paused) return; if (zoom>0){ zoomLast=zoom; zoom=0; } else zoom=zoomLast; }   // bật / tắt ngay
 function switchZoom(dir){ if (!human.alive||over||paused||zoom===0) return; zoom = dir===undefined ? (zoom===1?2:1) : (dir>0?2:1); zoomLast=zoom; }
 function showPause(){
   if (over) return;
-  paused=true; closeType(); resetTouch();
+  paused=true; closeType(); resetTouch(); $('howto').style.display='none';
   ovTitle.textContent='TẠM DỪNG'; ovText.textContent='Bạn muốn tiếp tục hay chơi lại ván mới?';
   ovBtn.textContent='Tiếp tục'; ovRestart.style.display='inline-block'; ov.style.display='flex';
 }
@@ -674,7 +822,7 @@ function startPlay(){
     fallback=true;
     try{
       const de=document.documentElement;
-      if (de.requestFullscreen) de.requestFullscreen().then(()=>{ if (screen.orientation&&screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }).catch(()=>{});
+      if (document.fullscreenEnabled&&de.requestFullscreen) de.requestFullscreen().then(()=>{ if (screen.orientation&&screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }).catch(()=>{});
     }catch(err){}
     return;
   }
@@ -684,7 +832,7 @@ ovBtn.addEventListener('click',()=>{ if (over) newRound(); startPlay(); });
 ovRestart.addEventListener('click',()=>{ newRound(); startPlay(); });
 
 /* ================== CẢM ỨNG ================== */
-const joyBase=$('joyBase'), joyKnob=$('joyKnob'), btnType=$('btnType'), btnSpec=$('btnSpec'), btnCrouch=$('btnCrouch'), btnScope=$('btnScope'), btnZoom=$('btnZoom');
+const joyBase=$('joyBase'), joyKnob=$('joyKnob'), btnType=$('btnType'), btnSpec=$('btnSpec'), btnCrouch=$('btnCrouch'), btnScope=$('btnScope'), btnZoom=$('btnZoom'), btnJump=$('btnJump');
 function resetTouch(){
   joy.on=false; joy.id=null; joy.x=0; joy.y=0; look.id=null;
   joyBase.style.display='none'; joyKnob.style.transform='translate(0,0)';
@@ -734,6 +882,7 @@ document.addEventListener('touchend',endTouch);
 document.addEventListener('touchcancel',endTouch);
 btnType.addEventListener('click',()=>openType());
 btnCrouch.addEventListener('click',toggleCrouch);
+btnJump.addEventListener('click',jump);
 btnScope.addEventListener('click',toggleScope);
 btnZoom.addEventListener('click',()=>switchZoom());
 addEventListener('wheel',e=>{ if (zoom>0&&active()&&!typing) switchZoom(e.deltaY<0?1:-1); },{passive:true});
@@ -751,6 +900,7 @@ function updateTouchUI(){
   btnScope.classList.toggle('on',zoom>0);
   btnScope.textContent = zoom>0 ? '✕ THOÁT' : 'ỐNG DÒM';
   btnZoom.style.display = (alive&&zoom>0) ? 'block' : 'none';
+  btnJump.style.display = alive ? 'block' : 'none';
   btnZoom.textContent = 'ZOOM '+ZOOM_LBL[zoom===1?2:1];
 }
 
@@ -760,42 +910,98 @@ function initAudio(){
   if (AC){ if (AC.state==='suspended') AC.resume(); return; }
   const Ctx=window.AudioContext||window.webkitAudioContext; if (!Ctx) return;
   try{
-    AC=new Ctx(); master=AC.createGain(); master.gain.value=0.9; master.connect(AC.destination);
+    AC=new Ctx(); master=AC.createGain(); master.gain.value=0.9*1.2; master.connect(AC.destination);   // +20% âm lượng chung
     const len=Math.floor(AC.sampleRate*0.25), buf=AC.createBuffer(1,len,AC.sampleRate), d=buf.getChannelData(0);
     for (let i=0;i<len;i++) d[i]=Math.random()*2-1;
     noiseBuf=buf;
+    if (AC.state==='suspended') AC.resume();
   }catch(err){ AC=null; }
 }
+// Một số trình duyệt tạm dừng âm thanh: mỗi lần chạm/bấm phím thì đánh thức lại
+['pointerdown','touchend','keydown'].forEach(ev=>addEventListener(ev,()=>{ if (AC&&AC.state==='suspended') AC.resume(); },{passive:true}));
 const camPlayer=()=>human.alive?human:(spectate&&spectate.alive?spectate:null);
 // Tiếng bước chân: nhỏ dần theo khoảng cách, lệch trái/phải theo hướng, bị tường chắn thì nghe ù ù. Ngồi thì không có tiếng.
+function spatialOut(pan){
+  if (AC.createStereoPanner){ const pn=AC.createStereoPanner(); pn.pan.value=pan; pn.connect(master); return pn; }
+  return master;
+}
+// Kiểu "Cát mềm": sột nhẹ ở dải trầm-giữa + một tiếng bịch nhỏ
 function stepSound(p,run){
   if (!AC||!noiseBuf) return;
   const lp=camPlayer(); if (!lp) return;
-  let vol=run?1:0.6, pan=0, freq=run?1300:950;
-  if (p===lp) vol*=0.35;                       // tiếng bước chân của chính mình (nhỏ, ở giữa)
+  let vol=run?1:0.6, pan=0, cut=run?1000:800;
+  if (p===lp) vol*=0.6;                       // tiếng bước chân của chính mình (nhỏ, ở giữa)
   else {
     const dx=p.x-lp.x, dz=p.z-lp.z, d=Math.hypot(dx,dz), maxD=run?45:30;
     if (d>maxD) return;
     vol*=Math.pow(1-d/maxD,1.5);
-    if (!los(lp.x,lp.z,p.x,p.z,1.2,1.0)){ vol*=0.5; freq=420; }
+    if (!los(lp.x,lp.z,p.x,p.z,1.2,1.0)){ vol*=0.5; cut=Math.min(cut,380); }   // bị tường chắn: nghe ù ù
     pan=clamp((dx*-Math.cos(lp.h)+dz*Math.sin(lp.h))/(d||1),-1,1);
   }
   if (vol<0.015) return;
-  const t=AC.currentTime, dur=run?0.14:0.1;
-  const src=AC.createBufferSource(); src.buffer=noiseBuf; src.playbackRate.value=0.8+Math.random()*0.4;
-  const f=AC.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq*(0.85+Math.random()*0.3); f.Q.value=0.8;
+  const t=AC.currentTime, j=0.88+Math.random()*0.24, dur=run?0.16:0.14, out=spatialOut(pan);
+  const src=AC.createBufferSource(); src.buffer=noiseBuf; src.playbackRate.value=0.9;
+  const f=AC.createBiquadFilter(); f.type='lowpass'; f.frequency.value=cut*j; f.Q.value=0.5;
   const g=AC.createGain();
-  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(Math.max(0.001,vol*1.8),t+0.006); g.gain.exponentialRampToValueAtTime(0.0005,t+dur);
-  src.connect(f); f.connect(g);
-  let out=g;
-  if (AC.createStereoPanner){ const pn=AC.createStereoPanner(); pn.pan.value=pan; g.connect(pn); out=pn; }
-  out.connect(master); src.start(t); src.stop(t+dur+0.05);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002,vol*1.5),t+0.012); g.gain.exponentialRampToValueAtTime(0.0002,t+dur);
+  src.connect(f); f.connect(g); g.connect(out); src.start(t); src.stop(t+dur+0.05);
+  const o=AC.createOscillator(), og=AC.createGain(); o.type='sine';
+  o.frequency.setValueAtTime(85*j,t); o.frequency.exponentialRampToValueAtTime(50,t+0.09);
+  og.gain.setValueAtTime(0.0001,t); og.gain.exponentialRampToValueAtTime(Math.max(0.0002,vol*0.22),t+0.008); og.gain.exponentialRampToValueAtTime(0.0002,t+0.09);
+  o.connect(og); og.connect(out); o.start(t); o.stop(t+0.14);
+}
+// Tiếng đáp đất sau cú nhảy: to hơn hẳn tiếng bước, nghe được từ xa (tới ~65m)
+function landSound(p){
+  if (!AC||!noiseBuf) return;
+  const lp=camPlayer(); if (!lp) return;
+  let vol=1, pan=0, cut=900;
+  if (p===lp) vol=0.6;
+  else {
+    const dx=p.x-lp.x, dz=p.z-lp.z, d=Math.hypot(dx,dz), maxD=65;
+    if (d>maxD) return;
+    vol*=Math.pow(1-d/maxD,1.2);
+    if (!los(lp.x,lp.z,p.x,p.z,1.2,1.0)){ vol*=0.55; cut=320; }
+    pan=clamp((dx*-Math.cos(lp.h)+dz*Math.sin(lp.h))/(d||1),-1,1);
+  }
+  if (vol<0.02) return;
+  const t=AC.currentTime, out=spatialOut(pan);
+  const src=AC.createBufferSource(); src.buffer=noiseBuf; src.playbackRate.value=0.8;
+  const f=AC.createBiquadFilter(); f.type='lowpass'; f.frequency.value=cut; f.Q.value=0.5;
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002,vol*2.2),t+0.006); g.gain.exponentialRampToValueAtTime(0.0002,t+0.24);
+  src.connect(f); f.connect(g); g.connect(out); src.start(t); src.stop(t+0.3);
+  const o=AC.createOscillator(), og=AC.createGain(); o.type='sine';
+  o.frequency.setValueAtTime(100,t); o.frequency.exponentialRampToValueAtTime(38,t+0.18);
+  og.gain.setValueAtTime(0.0001,t); og.gain.exponentialRampToValueAtTime(Math.max(0.0002,vol*0.9),t+0.008); og.gain.exponentialRampToValueAtTime(0.0002,t+0.2);
+  o.connect(og); og.connect(out); o.start(t); o.stop(t+0.25);
 }
 
+function tone(freq,t0,dur,type,vol,slideTo){
+  if (!AC) return;
+  const t=AC.currentTime+t0, o=AC.createOscillator(), g=AC.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t); if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.01); g.gain.exponentialRampToValueAtTime(0.0005,t+dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.05);
+}
+function thump(vol){
+  if (!AC||!noiseBuf) return;
+  const t=AC.currentTime, src=AC.createBufferSource(), f=AC.createBiquadFilter(), g=AC.createGain();
+  src.buffer=noiseBuf; f.type='lowpass'; f.frequency.value=260;
+  g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0005,t+0.18);
+  src.connect(f); f.connect(g); g.connect(master); src.start(t); src.stop(t+0.25);
+}
+function sfx(kind){
+  if (!AC) return;
+  if (kind==='win'){ tone(523,0,0.12,'triangle',0.5); tone(784,0.1,0.14,'triangle',0.5); tone(1047,0.2,0.32,'triangle',0.5); }   // hạ được đối thủ
+  else if (kind==='lose'){ tone(330,0,0.9,'sawtooth',0.4,55); tone(110,0.05,0.8,'square',0.28,40); thump(0.7); }                  // bị hạ
+  else if (kind==='wrong'){ tone(170,0,0.25,'square',0.28,120); }                                                                 // gõ sai tên
+  else if (kind==='ping'){ tone(1300,0,0.08,'sine',0.35); tone(1300,0.14,0.08,'sine',0.35); }                                     // radar báo động
+}
+const RADAR_R=30, RADAR_ALERT=14; let lastPing=0;
 const elScope=$('scope'), elZl=$('zlbl'), elStance=$('stance'), elCross=$('cross');
 function updateHud(){
   const z=(human.alive&&!over)?zoom:0;
-  elScope.style.display=z>0?'block':'none'; elZl.textContent=ZOOM_LBL[z]||''; elCross.style.display=z>0?'none':'block';
+  elScope.style.display=z>0?'block':'none'; elZl.textContent=ZOOM_LBL[z]||''; elCross.style.display=(z>0||!human.alive)?'none':'block';
   elStance.style.display=(human.alive&&!over&&human.crouch)?'block':'none';
 }
 
@@ -817,6 +1023,22 @@ function drawMini(){
   const x=(p.x+CFG.HALF)*S, z=(p.z+CFG.HALF)*S, fx=Math.sin(p.h), fz=Math.cos(p.h);
   mg.fillStyle='#ffd54a'; mg.beginPath();
   mg.moveTo(x+fx*7,z+fz*7); mg.lineTo(x-fx*4-fz*4,z-fz*4+fx*4); mg.lineTo(x-fx*4+fz*4,z-fz*4-fx*4); mg.closePath(); mg.fill();
+  // Radar: người ở gần mà KHÔNG ngồi sẽ hiện chấm đỏ; người đang ngồi thì vô hình
+  let near=false; const now=performance.now();
+  for (const q of players){
+    if (q===p||!q.alive||isCr(q)) continue;
+    const d=dist(p,q); if (d>RADAR_R) continue;
+    const close=d<RADAR_ALERT; if (close) near=true;
+    const qx=(q.x+CFG.HALF)*S, qz=(q.z+CFG.HALF)*S, pulse=(now/300)%1;
+    mg.fillStyle=close?'#ff3b30':'#ff9f0a'; mg.beginPath(); mg.arc(qx,qz,3.2,0,7); mg.fill();
+    if (close){ mg.strokeStyle='rgba(255,59,48,'+(1-pulse)+')'; mg.lineWidth=2; mg.beginPath(); mg.arc(qx,qz,3+pulse*9,0,7); mg.stroke(); }
+  }
+  mini.style.borderColor = (near&&Math.floor(now/250)%2) ? '#ff3b30' : 'rgba(255,255,255,.6)';
+  if (near){
+    mg.fillStyle='rgba(200,30,20,.88)'; mg.fillRect(0,142,160,18);
+    mg.fillStyle='#fff'; mg.font='bold 12px sans-serif'; mg.textAlign='center'; mg.fillText('⚠ CÓ NGƯỜI GẦN',80,155);
+    if (human.alive&&!paused&&!over&&active()&&now-lastPing>1600){ lastPing=now; sfx('ping'); }
+  }
 }
 
 function update(dt){
@@ -838,6 +1060,7 @@ function update(dt){
       move(human,(fx*f+rx*s)*sp*dt,(fz*f+rz*s)*sp*dt);
     }
   }
+  if (human.alive) physics(human,dt);
   // Bot
   for (const b of players) if (!b.human && b.alive) updateBot(b,dt);
   // Đẩy nhau ra
@@ -850,12 +1073,19 @@ function update(dt){
   for (const p of players){
     if (!p.alive){ p.spd=0; continue; }
     const d=Math.hypot(p.x-p.px,p.z-p.pz); p.px=p.x; p.pz=p.z;
-    p.spd=d/Math.max(dt,1e-4); p.running=p.spd>6.2;
-    if (p.spd>2.2 && !p.crouch){
-      p.stepD+=d; const stride=p.running?2.3:1.7;
+    p.spd=d/Math.max(dt,1e-4); p.running=p.spd>CFG.RUN_MIN;
+    if (p.spd>CFG.STEP_MIN && !p.crouch && p.grounded){
+      p.stepD+=d; const stride=p.running?1.75:1.3;
       if (p.stepD>=stride){ p.stepD-=stride; stepSound(p,p.running); }
     } else p.stepD=Math.min(p.stepD,0.8);
   }
+  // Quay mặt vào tường quá lâu: 15s cảnh báo, 30s bị Admin loại
+  for (const p of players){
+    if (!p.alive) continue;
+    if (facingWall(p)) p.wallT+=dt; else p.wallT=0;
+    if (p.wallT>=CFG.WALL_KILL) eliminate(p,ADMIN);
+  }
+  updateWallWarn();
   // Bot đọc bảng tên
   percT+=dt; if (percT>=0.1){ const d=percT; percT=0; perceive(d); }
   if (!human.alive && (!spectate||!spectate.alive)) pickSpectate();
@@ -863,20 +1093,34 @@ function update(dt){
 
 function syncVisuals(dt){
   const cp = human.alive ? human : (spectate&&spectate.alive?spectate:null);
+  const dead=!human.alive;                              // đã bị loại: ẩn mọi bảng tên
+  const topDown=dead&&human.deathT>=DEATH_VIEW;          // ngã xong mới chuyển sang camera trên cao
+  for (const r of roofMeshes) r.visible=!topDown;
   for (const p of players){
+    p.tag.visible=p.alive&&!dead;
     p.ck+=((p.crouch&&p.alive?1:0)-p.ck)*Math.min(1,dt*10);        // hoạt ảnh ngồi / đứng
     p.body.scale.y=1-0.45*p.ck; p.body.position.y=0.56*(1-0.45*p.ck);
     p.rig.position.y=-0.5*p.ck; p.rig.position.z=0.1*p.ck;
-    p.group.position.set(p.x,0,p.z); p.group.rotation.y=p.h;
+    p.group.position.set(p.x,p.y,p.z); p.group.rotation.y=p.h;
     if (!p.alive){
       p.deathT+=dt; const k=Math.min(1,p.deathT/0.45);
-      p.group.rotation.x=-Math.PI/2*k; p.group.position.y=0.3*k;
+      p.group.rotation.x=-Math.PI/2*k; p.group.position.y=p.y+0.3*k;
     }
-    p.group.visible = (p!==cp);
+    p.group.visible = dead ? (topDown || p!==human) : (p!==cp);
   }
-  if (cp){
-    camera.position.set(cp.x,CFG.EYE-(CFG.EYE-CFG.EYE_C)*cp.ck,cp.z);
-    camera.rotation.set(cp===human?pitch:0, cp.h+Math.PI, 0);
+  if (dead){
+    // Pha 1: camera của chính mình đổ xuống đất (hạ thấp, ngửa lên, nghiêng). Pha 2: lướt lên camera trên cao nhìn người khác.
+    const t=human.deathT, k=ease(Math.min(1,t/0.6));
+    const eyeY=human.y+CFG.EYE-(CFG.EYE-CFG.EYE_C)*human.ck;
+    const fx=human.x-Math.sin(human.h)*0.7*k, fy=eyeY*(1-k)+0.3*k, fz=human.z-Math.cos(human.h)*0.7*k;
+    const frx=pitch+0.9*k, fry=human.h+Math.PI, frz=0.6*k;
+    const s=(cp&&t>DEATH_VIEW) ? smooth(Math.min(1,(t-DEATH_VIEW)/0.9)) : 0;
+    if (s>0){
+      camera.position.set(fx+(cp.x-fx)*s, fy+(32-fy)*s, fz+(cp.z-fz)*s);
+      camera.rotation.set(frx+(-Math.PI/2-frx)*s, fry+angDiff(fry,0)*s, frz*(1-s));
+    } else { camera.position.set(fx,fy,fz); camera.rotation.set(frx,fry,frz); }
+  } else if (cp){
+    camera.position.set(cp.x,cp.y+CFG.EYE-(CFG.EYE-CFG.EYE_C)*cp.ck,cp.z); camera.rotation.set(pitch, cp.h+Math.PI, 0);
   }
   const zz=human.alive?zoom:0, tf=ZOOM_FOV[zz];
   if (Math.abs(camera.fov-tf)>0.05){ camera.fov+=(tf-camera.fov)*Math.min(1,dt*12); camera.updateProjectionMatrix(); }
@@ -889,7 +1133,7 @@ function loop(now){
   requestAnimationFrame(loop);
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if (active() && !over && !paused) update(dt);
-  syncVisuals(over||paused||!active()?0:dt);
+  syncVisuals(paused||!active()?0:dt);
   renderer.render(scene,camera);
   drawMini(); updateHud();
   if (isTouch) updateTouchUI();
