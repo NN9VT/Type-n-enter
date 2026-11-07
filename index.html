@@ -155,7 +155,7 @@ body.touch #typebox small{display:none}
   <button id="btnExit">⟲ Menu</button>
 </div>
 <div id="ov">
-  <div id="ver">ver1.1</div>
+  <div id="ver">ver1.2</div>
   <div class="card">
     <h1 id="ovTitle">TỚI SỐ</h1>
     <p id="ovText">Mỗi người có một dãy số dán trên trán – bạn không thấy dãy số của mình, nhưng người khác thì thấy. <b>Gõ đúng dãy số</b> của đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
@@ -544,7 +544,17 @@ function makeChar(color,name){
   const tex=makeTagTexture(name);
   const tag=new THREE.Mesh(new THREE.PlaneGeometry(0.58,0.22), new THREE.MeshBasicMaterial({map:tex}));
   tag.position.set(0,1.48,0.25); tag.rotation.x=-0.18; rig.add(tag);
-  return {group,tag,body,tex,rig};
+  // Ống dòm kép (hiện khi người đó đang dùng ống dòm): đặt trước mắt, thấu kính mang màu của nhân vật
+  const bino=new THREE.Group(), dk=new THREE.MeshLambertMaterial({color:0x262a31}), dk2=new THREE.MeshLambertMaterial({color:0x15171a}), lensM=new THREE.MeshBasicMaterial({color:color.clone()});
+  const along=(geo,mat,x,z)=>{ const m=new THREE.Mesh(geo,mat); m.rotation.x=Math.PI/2; m.position.set(x,1.34,z); bino.add(m); };
+  for (const sx of [-0.075,0.075]){
+    along(new THREE.CylinderGeometry(0.065,0.065,0.22,12),dk,sx,0.41);
+    along(new THREE.CylinderGeometry(0.078,0.078,0.06,12),dk2,sx,0.53);
+    const lens=new THREE.Mesh(new THREE.CircleGeometry(0.058,16),lensM); lens.position.set(sx,1.34,0.562); bino.add(lens);
+  }
+  const bridge=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.15,8),dk); bridge.rotation.z=Math.PI/2; bridge.position.set(0,1.34,0.42); bino.add(bridge);
+  bino.visible=false; rig.add(bino);
+  return {group,tag,body,tex,rig,bino};
 }
 
 /* ================== TRẠNG THÁI GAME ================== */
@@ -1218,6 +1228,8 @@ function syncVisuals(dt){
   for (const r of roofMeshes) r.visible=!topDown;
   for (const p of players){
     p.tag.visible=p.alive&&!dead;
+    const bo=p.alive&&(p.human?zoom>0:!!p.scope);                    // đang dùng ống dòm: hiện ống dòm, bảng tên nâng lên sát phía trên
+    p.bino.visible=bo; p.tag.position.y=bo?1.55:1.48;
     p.ck+=((p.crouch&&p.alive?1:0)-p.ck)*Math.min(1,dt*10);        // hoạt ảnh ngồi / đứng
     p.body.scale.y=1-0.45*p.ck; p.body.position.y=0.56*(1-0.45*p.ck);
     p.rig.position.y=-0.5*p.ck; p.rig.position.z=0.1*p.ck;
@@ -1475,8 +1487,8 @@ function leaveRoom(silent){
 function netFull(){
   if (!net||!human) return;
   net.mine.set({ n:human.name, x:r2(human.x), z:r2(human.z), y:r2(human.y), h:r2(human.h), c:human.crouch?1:0, a:human.alive?1:0,
-                 w:net.mode==='game'?0:1, r:net.round, j:net.j, nk:net.nick, t:TS() });
-  net.sent={x:human.x,z:human.z,y:human.y,h:human.h,c:human.crouch};
+                 w:net.mode==='game'?0:1, r:net.round, j:net.j, nk:net.nick, b:zoom>0?1:0, t:TS() });
+  net.sent={x:human.x,z:human.z,y:human.y,h:human.h,c:human.crouch,b:zoom>0?1:0};
 }
 function newRoundOnline(spawn){
   for (const p of players){ if (!p.remote){ scene.remove(p.group); p.tex.dispose(); } }
@@ -1504,7 +1516,7 @@ function addRemote(id,d){
   scene.add(ch.group);
   const x=num(d.x), z=num(d.z), y=num(d.y), h=num(d.h), alive=d.a!==0;
   const p=Object.assign({
-    id, name:d.n, nick:cleanNick(d.nk)||'Khách', human:false, remote:true, alive, x, z, y, h, tx:x, tz:z, ty:y, th:h, tc:!!d.c, last:performance.now(), air:0,
+    id, name:d.n, nick:cleanNick(d.nk)||'Khách', human:false, remote:true, alive, x, z, y, h, tx:x, tz:z, ty:y, th:h, tc:!!d.c, scope:!!d.b, last:performance.now(), air:0,
     deathT:alive?0:10, read:{}, crouch:!!d.c, vy:0, grounded:true, wallT:0, ck:d.c?1:0, spd:0, px:x, pz:z, stepD:0, running:false, heard:null
   }, ch);
   if (!alive){ p.tag.visible=false; p.body.material.color.set(0x777777); }
@@ -1531,7 +1543,7 @@ function netChange(id,d){
   if (!p){ addRemote(id,d); return; }
   if (d.n!==p.name){ removeRemote(id,true); addRemote(id,d); return; }
   if (d.a===0&&p.alive) eliminate(p,NETK);
-  p.tx=num(d.x); p.tz=num(d.z); p.ty=num(d.y); p.th=num(d.h); p.tc=!!d.c; p.last=performance.now();
+  p.tx=num(d.x); p.tz=num(d.z); p.ty=num(d.y); p.th=num(d.h); p.tc=!!d.c; p.scope=!!d.b; p.last=performance.now();
   if (d.nk) p.nick=cleanNick(d.nk)||p.nick;
 }
 function netEliminated(v,k){
@@ -1564,9 +1576,9 @@ function netTick(dt){
   if (net.acc<1/NET_HZ||!net.connected) return;
   net.acc=0;
   const s=net.sent, m=human, d={};
-  if (net.mode==='game'&&m.alive&&(!s||Math.abs(m.x-s.x)>0.02||Math.abs(m.z-s.z)>0.02||Math.abs(m.y-s.y)>0.02||Math.abs(angDiff(s.h,m.h))>0.02||m.crouch!==s.c)){
-    d.x=r2(m.x); d.z=r2(m.z); d.y=r2(m.y); d.h=r2(m.h); d.c=m.crouch?1:0;
-    net.sent={x:m.x,z:m.z,y:m.y,h:m.h,c:m.crouch};
+  if (net.mode==='game'&&m.alive&&(!s||Math.abs(m.x-s.x)>0.02||Math.abs(m.z-s.z)>0.02||Math.abs(m.y-s.y)>0.02||Math.abs(angDiff(s.h,m.h))>0.02||m.crouch!==s.c||(zoom>0?1:0)!==s.b)){
+    d.x=r2(m.x); d.z=r2(m.z); d.y=r2(m.y); d.h=r2(m.h); d.c=m.crouch?1:0; d.b=zoom>0?1:0;
+    net.sent={x:m.x,z:m.z,y:m.y,h:m.h,c:m.crouch,b:zoom>0?1:0};
   }
   if (net.beat>=3){ net.beat=0; d.t=TS(); }          // báo "mình vẫn còn đây"
   if (Object.keys(d).length) net.mine.update(d);
