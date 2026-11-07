@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Tên Trên Trán</title>
+<title>TỚI SỐ</title>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:system-ui,Arial,sans-serif;color:#fff}
 canvas#c{display:block}
@@ -128,12 +128,12 @@ body.touch #typebox small{display:none}
 </div>
 <div id="ov">
   <div class="card">
-    <h1 id="ovTitle">TÊN TRÊN TRÁN</h1>
-    <p id="ovText">Mỗi người có một bảng tên dán trên trán – bạn không thấy tên của mình, nhưng người khác thì thấy. <b>Gõ đúng tên</b> đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
+    <h1 id="ovTitle">TỚI SỐ</h1>
+    <p id="ovText">Mỗi người có một dãy số dán trên trán – bạn không thấy dãy số của mình, nhưng người khác thì thấy. <b>Gõ đúng dãy số</b> của đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
     <div id="lobby"></div>
     <p id="rotHint">📱 Hãy xoay ngang điện thoại để chơi</p>
     <details id="howto"><summary>Cách chơi &amp; điều khiển</summary>
-      <p>Tên trên trán gồm <b>4 chữ số</b> (ví dụ 4729, 0583). Gõ sai tên sẽ bị khóa bàn phím vài giây. Quay mặt vào tường quá 15 giây sẽ bị cảnh báo, quá 30 giây sẽ bị <b>Admin</b> loại. Tường thấp chỉ che được khi bạn <b>ngồi</b> – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> để đọc tên từ xa. Có vài bậc thang thùng và bục đá có thể <b>nhảy</b> lên để quan sát từ trên cao, nhưng ở trên đó ai cũng dễ thấy bạn hơn. Radar nhỏ ở góc trái chấm đỏ khi có người ở gần (người đang ngồi thì không hiện).</p>
+      <p>Tên trên trán gồm <b>4 chữ số</b> (ví dụ 4729, 0583). Gõ sai tên sẽ bị khóa bàn phím vài giây. Khi chỉ còn 2 người, cứ 5 giây vị trí của cả hai sẽ hiện trên mini map trong 1 giây. Quay mặt vào tường quá 15 giây sẽ bị cảnh báo, quá 30 giây sẽ bị <b>Admin</b> loại. Tường thấp chỉ che được khi bạn <b>ngồi</b> – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> để đọc tên từ xa. Có vài bậc thang thùng và bục đá có thể <b>nhảy</b> lên để quan sát từ trên cao, nhưng ở trên đó ai cũng dễ thấy bạn hơn. Radar nhỏ ở góc trái chấm đỏ khi có người ở gần (người đang ngồi thì không hiện).</p>
       <p><b>Online:</b> các máy nhập <b>cùng một mã phòng</b> rồi bấm <b>Chơi online</b> (ví dụ 1234) để vào <b>phòng chờ</b>. Người vào đầu tiên là chủ phòng (👑) và bấm <b>Bắt đầu ván</b> khi đủ ít nhất 2 người (tối đa 10). Ván online chỉ có người thật, không có bot. Ai vào sau khi ván đã bắt đầu sẽ chờ ở phòng chờ đến ván kế tiếp; hết ván cả phòng quay về phòng chờ. Mọi người phải dùng cùng một phiên bản file game.</p>
       <p id="deskHint"><b>Máy tính:</b> WASD đi · Shift chạy · Space nhảy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Enter gõ tên · Esc menu.</p>
       <p id="touchHint">📱 <b>Cảm ứng:</b> chạm nửa trái màn hình để hiện cần gạt di chuyển (gạt xa là chạy) · kéo ngón tay ở nửa phải để nhìn quanh · nút <b>GÕ TÊN</b> khi thấy bảng tên đối thủ · <b>NHẢY</b> · <b>NGỒI</b> · <b>ỐNG DÒM</b> (bật; bấm <b>THOÁT</b> để tắt, <b>ZOOM</b> để đổi mức).</p>
@@ -1036,6 +1036,8 @@ function sfx(kind){
   else if (kind==='ping'){ tone(1300,0,0.08,'sine',0.35); tone(1300,0.14,0.08,'sine',0.35); }                                     // radar báo động
 }
 const RADAR_R=30, RADAR_ALERT=14; let lastPing=0;
+const REVEAL_EVERY=5, REVEAL_LEN=1;   // chỉ còn 2 người: cứ 5 giây, vị trí của nhau hiện trên mini map trong 1 giây
+let revealT=0, revealOn=false;
 const elScope=$('scope'), elZl=$('zlbl'), elStance=$('stance'), elCross=$('cross');
 function updateHud(){
   const z=(human.alive&&!over)?zoom:0;
@@ -1071,6 +1073,16 @@ function drawMini(){
     const qx=(q.x+CFG.HALF)*S, qz=(q.z+CFG.HALF)*S, pulse=(now/300)%1;
     mg.fillStyle=close?'#ff3b30':'#ff9f0a'; mg.beginPath(); mg.arc(qx,qz,3.2,0,7); mg.fill();
     if (close){ mg.strokeStyle='rgba(255,59,48,'+(1-pulse)+')'; mg.lineWidth=2; mg.beginPath(); mg.arc(qx,qz,3+pulse*9,0,7); mg.stroke(); }
+  }
+  if (revealOn&&human.alive){                                // lộ vị trí đối thủ cuối cùng (bất kể xa hay đang ngồi)
+    const pulse=(now/250)%1;
+    for (const q of players){
+      if (q===p||!q.alive) continue;
+      const qx=(q.x+CFG.HALF)*S, qz=(q.z+CFG.HALF)*S;
+      mg.strokeStyle='rgba(255,255,255,'+(1-pulse)+')'; mg.lineWidth=2; mg.beginPath(); mg.arc(qx,qz,4+pulse*10,0,7); mg.stroke();
+      mg.fillStyle='#ff4dff'; mg.beginPath(); mg.arc(qx,qz,4.2,0,7); mg.fill();
+      mg.strokeStyle='#fff'; mg.lineWidth=1.5; mg.beginPath(); mg.arc(qx,qz,4.2,0,7); mg.stroke();
+    }
   }
   mini.style.borderColor = (near&&Math.floor(now/250)%2) ? '#ff3b30' : 'rgba(255,255,255,.6)';
   elRadarWarn.style.display = near ? 'block' : 'none';   // nằm ngoài mini map, không che mép dưới
@@ -1129,6 +1141,10 @@ function update(dt){
     if (p.wallT>=CFG.WALL_KILL) eliminate(p,ADMIN);
   }
   updateWallWarn();
+  // Chỉ còn 2 người sống: định kỳ lộ vị trí của nhau trên mini map
+  { let n=0; for (const q of players) if (q.alive) n++;
+    if (human.alive&&n===2) revealT+=dt; else revealT=0;
+    revealOn = revealT>=REVEAL_EVERY && ((revealT-REVEAL_EVERY)%REVEAL_EVERY)<REVEAL_LEN; }
   // Bot đọc bảng tên
   percT+=dt; if (percT>=0.1){ const d=percT; percT=0; perceive(d); }
   if (!human.alive && (!spectate||!spectate.alive)) pickSpectate();
