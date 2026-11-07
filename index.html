@@ -37,6 +37,7 @@ body.touch #deskHint{display:none}
 #roomCode{font-size:20px;font-weight:700;text-transform:uppercase;text-align:center;width:10.5em;max-width:56vw;padding:9px;border-radius:9px;border:2px solid #ffd54a;background:#111;color:#fff;outline:none}
 #onl button{margin-top:0;font-size:17px;padding:10px 18px;background:#7fd1ff}
 #onlMsg{font-size:13px;color:#ffd54a;margin-top:6px;min-height:16px}
+#ver{position:absolute;right:12px;bottom:8px;font:600 12px/1 sans-serif;color:rgba(255,255,255,.55);pointer-events:none}
 #ov.result #onl,#ov.result #lobby{display:none}
 #ovLeave{display:none;background:#9aa4ad;margin-left:10px}
 #ov button:disabled{opacity:.45}
@@ -154,6 +155,7 @@ body.touch #typebox small{display:none}
   <button id="btnExit">⟲ Menu</button>
 </div>
 <div id="ov">
+  <div id="ver">ver1.1</div>
   <div class="card">
     <h1 id="ovTitle">TỚI SỐ</h1>
     <p id="ovText">Mỗi người có một dãy số dán trên trán – bạn không thấy dãy số của mình, nhưng người khác thì thấy. <b>Gõ đúng dãy số</b> của đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
@@ -1320,6 +1322,7 @@ setInterval(()=>{ if (chatLines.length) renderChat(); },1000);
 function onlMsg(t,c){ onlMsgEl.textContent=t; onlMsgEl.style.color=c||'#ffd54a'; }
 function refreshOnl(){
   const on=!!net;
+  $('ver').style.display=atMenu?'block':'none';          // số phiên bản: chỉ hiện ở menu chính
   $('ovLeave').style.display=(atMenu||resultOnline)?'none':'inline-block';
   $('ovLeave').textContent=on?'Rời phòng online':'Rời phòng';
   ov.classList.toggle('inroom',on);
