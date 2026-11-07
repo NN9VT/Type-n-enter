@@ -31,6 +31,18 @@ body.touch #deskHint{display:none}
 @media (orientation:portrait){ body.touch #rotHint{display:block} body.touch #rot{display:block} }
 @media (max-height:480px){ #ov h1{font-size:24px;margin:0 0 6px} #ov p{font-size:13px;line-height:1.35;margin:6px 0} #ov .card{padding:12px 20px} #ov button{padding:10px 26px;font-size:18px;margin-top:6px} }
 #ov h1{margin:0 0 10px;font-size:34px}
+#onl{margin:10px 0 0}
+#onl .onlrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+#roomCode{font-size:20px;font-weight:700;text-transform:uppercase;text-align:center;width:10.5em;max-width:56vw;padding:9px;border-radius:9px;border:2px solid #ffd54a;background:#111;color:#fff;outline:none}
+#onl button{margin-top:0;font-size:17px;padding:10px 18px;background:#7fd1ff}
+#onlMsg{font-size:13px;color:#ffd54a;margin-top:6px;min-height:16px}
+#ovLeave{display:none;background:#9aa4ad;margin-left:10px}
+#ov button:disabled{opacity:.45}
+#lobby{display:none;margin:8px 0}
+#lobby .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+#lobby .chip{background:rgba(255,255,255,.14);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700}
+#lobby .chip.me{background:#ffd54a;color:#111}
+#lobby .lmsg{margin-top:8px;font-size:14px;color:#cfd6dd}
 #ov p{line-height:1.5;margin:8px 0}
 #ov button{margin-top:14px;font-size:20px;font-weight:700;padding:12px 30px;border:0;border-radius:10px;background:#ffd54a;cursor:pointer}
 /* ===== Cảm ứng ===== */
@@ -46,8 +58,8 @@ body.touch #touch{display:block}
 #typeBtns{display:none;margin-top:8px}
 #typeBtns button{font-size:21px;font-weight:700;padding:9px 25px;margin:0 6px;border:0;border-radius:8px;background:#ffd54a}
 #ovRestart{display:none;margin-left:10px;background:#ff8a80}
-#btnExit{position:absolute;left:12px;top:182px;pointer-events:auto;border:0;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:700;background:rgba(0,0,0,.55);color:#fff}
-body.touch #btnExit{top:132px}
+#btnExit{position:absolute;left:12px;top:212px;pointer-events:auto;border:0;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:700;background:rgba(0,0,0,.55);color:#fff}
+body.touch #btnExit{top:160px}
 #btnCrouch,#btnScope,#btnZoom{width:76px;height:76px;font-size:13px;background:rgba(255,255,255,.85);display:none}
 #btnScope{right:24px;top:64px}
 #btnZoom{right:110px;top:70px;width:64px;height:64px;background:rgba(200,230,255,.92)}
@@ -83,13 +95,15 @@ body.touch #hint{display:none}
 body.touch #typeBtns{display:none}
 body.touch #typebox{bottom:auto;top:10%}
 body.touch #mini{width:110px;height:110px}
+#radarWarn{position:absolute;left:12px;top:180px;width:164px;box-sizing:border-box;text-align:center;display:none;background:rgba(200,30,20,.92);color:#fff;font:800 13px/1 sans-serif;padding:6px 4px;border-radius:7px;pointer-events:none;white-space:nowrap}
+body.touch #radarWarn{top:130px;width:114px;font-size:11px;padding:5px 2px}
 body.touch #typebox small{display:none}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="hud">
-  <canvas id="mini" width="160" height="160"></canvas>
+  <canvas id="mini" width="160" height="160"></canvas><div id="radarWarn">⚠ CÓ NGƯỜI GẦN</div>
   <div id="alive"></div>
   <div id="feed"></div>
   <div id="scope"><div class="ring"></div><div class="lbl" id="zlbl"></div></div>
@@ -116,17 +130,22 @@ body.touch #typebox small{display:none}
   <div class="card">
     <h1 id="ovTitle">TÊN TRÊN TRÁN</h1>
     <p id="ovText">Mỗi người có một bảng tên dán trên trán – bạn không thấy tên của mình, nhưng người khác thì thấy. <b>Gõ đúng tên</b> đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
+    <div id="lobby"></div>
     <p id="rotHint">📱 Hãy xoay ngang điện thoại để chơi</p>
     <details id="howto"><summary>Cách chơi &amp; điều khiển</summary>
       <p>Tên trên trán gồm <b>4 chữ số</b> (ví dụ 4729, 0583). Gõ sai tên sẽ bị khóa bàn phím vài giây. Quay mặt vào tường quá 15 giây sẽ bị cảnh báo, quá 30 giây sẽ bị <b>Admin</b> loại. Tường thấp chỉ che được khi bạn <b>ngồi</b> – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> để đọc tên từ xa. Có vài bậc thang thùng và bục đá có thể <b>nhảy</b> lên để quan sát từ trên cao, nhưng ở trên đó ai cũng dễ thấy bạn hơn. Radar nhỏ ở góc trái chấm đỏ khi có người ở gần (người đang ngồi thì không hiện).</p>
+      <p><b>Online:</b> các máy nhập <b>cùng một mã phòng</b> rồi bấm <b>Chơi online</b> (ví dụ 1234) để vào <b>phòng chờ</b>. Người vào đầu tiên là chủ phòng (👑) và bấm <b>Bắt đầu ván</b> khi đủ ít nhất 2 người (tối đa 10). Ván online chỉ có người thật, không có bot. Ai vào sau khi ván đã bắt đầu sẽ chờ ở phòng chờ đến ván kế tiếp; hết ván cả phòng quay về phòng chờ. Mọi người phải dùng cùng một phiên bản file game.</p>
       <p id="deskHint"><b>Máy tính:</b> WASD đi · Shift chạy · Space nhảy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Enter gõ tên · Esc menu.</p>
       <p id="touchHint">📱 <b>Cảm ứng:</b> chạm nửa trái màn hình để hiện cần gạt di chuyển (gạt xa là chạy) · kéo ngón tay ở nửa phải để nhìn quanh · nút <b>GÕ TÊN</b> khi thấy bảng tên đối thủ · <b>NHẢY</b> · <b>NGỒI</b> · <b>ỐNG DÒM</b> (bật; bấm <b>THOÁT</b> để tắt, <b>ZOOM</b> để đổi mức).</p>
     </details>
-    <div class="btns"><button id="ovBtn">Bắt đầu</button><button id="ovRestart">Chơi lại ván mới</button></div>
+    <div id="onl"><div class="onlrow"><input id="roomCode" maxlength="8" placeholder="Mã phòng, vd 1234" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"><button id="ovJoin">🌐 Chơi online</button></div><div id="onlMsg"></div></div>
+    <div class="btns"><button id="ovBtn">Bắt đầu</button><button id="ovRestart">Chơi lại ván mới</button><button id="ovLeave">Rời phòng online</button></div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 (() => {
 'use strict';
@@ -303,14 +322,16 @@ function lowWall(x,z,hw,hd){
   const c=new THREE.Mesh(new THREE.BoxGeometry(hw*2+0.15,0.12,hd*2+0.15),mat(0x8f6f48)); c.position.set(x,LOW_H+0.06,z); scene.add(c);
 }
 
-// Bậc thang bằng thùng: 3 bậc cao 0.9 / 1.8 / 2.7m, mỗi bậc nhảy lên được từ bậc dưới
-function stairs(x,z,alongX,sign){
-  const cols=[0xb08a50,0xa07a40,0x946d36], hs=[0.9,1.8,2.7], hw=[0.9,0.9,1.4];
-  let off=-sign*3.2;
-  for (let i=0;i<3;i++){
-    const w=hw[i], c=off+sign*w;
-    if (alongX) addBox(x+c,z,w,w,hs[i],cols[i]); else addBox(x,z+c,w,w,hs[i],cols[i]);
-    off+=sign*w*2;
+// Tháp quan sát xoắn ốc: 8 bậc xếp quanh một trụ, mỗi bậc cao hơn bậc trước 0.8m (nhảy lên được, cao nhảy ~1.1m).
+// Bậc cuối (6.4m) là sàn rộng để quan sát cả đấu trường. Chiếm chỉ ~8x8m.
+const SPIRAL={N:8, R:2.3, RISE:0.8, HALF:1.05};
+function spiralTower(cx,cz){
+  const {N,R,RISE,HALF}=SPIRAL, top=RISE*N;
+  addBox(cx,cz,0.75,0.75,top,0x7d5f33);                       // trụ giữa
+  for (let i=0;i<N;i++){
+    const ang=i*Math.PI*2/N, last=i===N-1, hs=last?1.6:HALF;
+    const col=new THREE.Color().setHSL(0.09,0.42,0.50-i*0.025).getHex();
+    addBox(cx+Math.sin(ang)*R, cz+Math.cos(ang)*R, hs,hs, RISE*(i+1), col);
   }
 }
 
@@ -333,6 +354,9 @@ function buildMap(){
   // Hai hành lang có mái cắt ngang phố chính
   tunnel(-46,0,22,3.4,true);
   tunnel(46,0,22,3.4,true);
+
+  // Tháp quan sát xoắn ốc ở phố bắc; chừa trống xung quanh (các vật cản nhỏ rải sau đó sẽ tránh vùng này)
+  reg(0,-36,8); spiralTower(0,-36);
 
   // Ốc đảo (góc đông-nam) – hồ nước đi qua được, cọ là vật cản
   reg(72,72,16);
@@ -369,7 +393,6 @@ function buildMap(){
   for (let i=0;i<26;i++){ const hl=rr(1.6,3.2), horiz=rnd()<0.5;                                 // tường thấp: phải ngồi mới được che
     place(hl+0.5,(x,z)=> horiz ? lowWall(x,z,hl,0.3) : lowWall(x,z,0.3,hl)); }
   for (let i=0;i<14;i++) place(1.3,(x,z)=>lowWall(x,z,0.9,0.9));                                // thùng thấp
-  for (let i=0;i<6;i++) place(4.4,(x,z)=>stairs(x,z,rnd()<0.5,rnd()<0.5?1:-1));                // bậc thang thùng: nhảy lên được
   for (let i=0;i<12;i++) place(1.9,(x,z)=>addBox(x,z,1.4,0.7,0.9,0xb89a62));                     // bục đá thấp 0.9m: nhảy lên được
   for (let i=0;i<24;i++){ const s=rr(1.3,2.6);                                                   // đá sa thạch
     place(s+0.5,(x,z)=>{
@@ -496,6 +519,7 @@ function makeChar(color,name){
 
 /* ================== TRẠNG THÁI GAME ================== */
 let players=[], human=null, spectate=null;
+let net=null;            // null = chơi với bot; khác null = đang ở phòng online
 let over=false, pitch=0, cooldown=0, percT=0, typing=false;
 let locked=false, fallback=false, mouseDown=false, paused=false;
 let zoom=0;   // 0 = tắt ống dòm, 1 = ×3, 2 = ×8
@@ -513,6 +537,7 @@ function spawnOk(x,z,spawns){
   return true;
 }
 function newRound(){
+  if (net) return newRoundOnline();
   for (const p of players){ scene.remove(p.group); p.tex.dispose(); }
   players=[]; over=false; spectate=null; cooldown=0; pitch=0; zoom=0;
   elBanner.style.display='none'; elFeed.innerHTML='';
@@ -667,7 +692,7 @@ function updateBot(b,dt){
 }
 function perceive(dt){
   for (const b of players){
-    if (!b.alive||b.human) continue;
+    if (!b.alive||b.human||b.remote) continue;
     for (const t of players){
       if (!b.alive) break;
       if (t===b||!t.alive) continue;
@@ -695,6 +720,7 @@ function eliminate(v,k){
     banner(k&&k.admin ? `Bạn bị Admin loại vì quay mặt vào tường quá lâu!  (tên trên trán bạn là ${v.name})` : `Bạn đã bị loại!  (tên trên trán bạn là ${v.name})`);
     pickSpectate();
   }
+  if (net) netEliminated(v,k);
   updateAlive();
   const alive=players.filter(p=>p.alive);
   if (alive.length<=1) endGame(alive[0]||null);
@@ -703,7 +729,7 @@ function pickSpectate(){
   const a=players.filter(p=>p.alive&&p!==human);
   spectate=a.length?a[Math.floor(Math.random()*a.length)]:null;
 }
-function updateAlive(){ elAlive.textContent=`Còn lại: ${players.filter(p=>p.alive).length} / ${players.length}`; }
+function updateAlive(){ elAlive.textContent=`Còn lại: ${players.filter(p=>p.alive).length} / ${players.length}`+(net?` · Phòng ${net.code}`:''); }
 function banner(t){ elBanner.textContent=t; elBanner.style.display='block'; }
 let msgTimer=0;
 function flash(t,c){ elMsg.textContent=t; elMsg.style.color=c||'#fff'; clearTimeout(msgTimer); msgTimer=setTimeout(()=>elMsg.textContent='',2200); }
@@ -712,7 +738,8 @@ function endGame(w){
   if (document.exitPointerLock) document.exitPointerLock();
   ovTitle.textContent = w===human ? '🏆 BẠN THẮNG!' : (w ? `${w.name} thắng` : 'Hòa');
   ovText.textContent = w===human ? 'Bạn là người cuối cùng còn trụ lại.' : (human.alive ? '' : `Tên trên trán bạn là ${human.name}.`);
-  ovBtn.textContent='Chơi lại'; ov.style.display='flex';
+  if (net){ net.mode='lobby'; try{ net.mine.update({w:1}); }catch(err){} }     // hết ván: cả phòng về phòng chờ
+  ovBtn.textContent='Chơi lại'; ovBtn.disabled=false; ov.style.display='flex'; refreshOnl(); if (net) renderLobby();
 }
 
 /* ================== NHẬP TÊN ================== */
@@ -813,8 +840,8 @@ function switchZoom(dir){ if (!human.alive||over||paused||zoom===0) return; zoom
 function showPause(){
   if (over) return;
   paused=true; closeType(); resetTouch(); $('howto').style.display='none';
-  ovTitle.textContent='TẠM DỪNG'; ovText.textContent='Bạn muốn tiếp tục hay chơi lại ván mới?';
-  ovBtn.textContent='Tiếp tục'; ovRestart.style.display='inline-block'; ov.style.display='flex';
+  ovTitle.textContent='TẠM DỪNG'; ovText.textContent=net?'Ván online vẫn đang diễn ra với những người khác.':'Bạn muốn tiếp tục hay chơi lại ván mới?';
+  ovBtn.textContent='Tiếp tục'; ovBtn.disabled=false; ovRestart.style.display=net?'none':'inline-block'; ov.style.display='flex'; refreshOnl();
 }
 function startPlay(){
   ov.style.display='none'; paused=false; ovRestart.style.display='none'; initAudio();
@@ -828,7 +855,18 @@ function startPlay(){
   }
   if (canvas.requestPointerLock) canvas.requestPointerLock(); else fallback=true;
 }
-ovBtn.addEventListener('click',()=>{ if (over) newRound(); startPlay(); });
+ovBtn.addEventListener('click',()=>{
+  if (net&&net.mode==='lobby'){ netStart(); return; }      // phòng chờ: chủ phòng bấm Bắt đầu
+  if (over&&!net) newRound();
+  startPlay();
+});
+$('ovJoin').addEventListener('click',()=>{
+  const code=$('roomCode').value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);
+  if (code.length<3){ onlMsg('Mã phòng cần 3–8 ký tự (chữ hoặc số), ví dụ 1234.','#ff8a80'); return; }
+  initAudio(); joinRoom(code);        // vào phòng chờ (chưa vào đấu trường)
+});
+$('roomCode').addEventListener('keydown',e=>{ e.stopPropagation(); if (e.key==='Enter') $('ovJoin').click(); });
+$('ovLeave').addEventListener('click',()=>{ leaveRoom(); onlMsg('Đã rời phòng online. Bạn đang ở chế độ chơi với bot.','#ffd54a'); startPlay(); });
 ovRestart.addEventListener('click',()=>{ newRound(); startPlay(); });
 
 /* ================== CẢM ỨNG ================== */
@@ -1006,6 +1044,7 @@ function updateHud(){
 }
 
 /* ================== VÒNG LẶP ================== */
+const elRadarWarn=$('radarWarn');
 const mini=$('mini'), mg=mini.getContext('2d'), S=160/(CFG.HALF*2);
 const miniBg=document.createElement('canvas'); miniBg.width=miniBg.height=160;
 (function(){
@@ -1034,9 +1073,8 @@ function drawMini(){
     if (close){ mg.strokeStyle='rgba(255,59,48,'+(1-pulse)+')'; mg.lineWidth=2; mg.beginPath(); mg.arc(qx,qz,3+pulse*9,0,7); mg.stroke(); }
   }
   mini.style.borderColor = (near&&Math.floor(now/250)%2) ? '#ff3b30' : 'rgba(255,255,255,.6)';
+  elRadarWarn.style.display = near ? 'block' : 'none';   // nằm ngoài mini map, không che mép dưới
   if (near){
-    mg.fillStyle='rgba(200,30,20,.88)'; mg.fillRect(0,142,160,18);
-    mg.fillStyle='#fff'; mg.font='bold 12px sans-serif'; mg.textAlign='center'; mg.fillText('⚠ CÓ NGƯỜI GẦN',80,155);
     if (human.alive&&!paused&&!over&&active()&&now-lastPing>1600){ lastPing=now; sfx('ping'); }
   }
 }
@@ -1062,12 +1100,17 @@ function update(dt){
   }
   if (human.alive) physics(human,dt);
   // Bot
-  for (const b of players) if (!b.human && b.alive) updateBot(b,dt);
+  for (const b of players) if (!b.human && !b.remote && b.alive) updateBot(b,dt);
+  if (net){ updateRemotes(dt); netTick(dt); }
   // Đẩy nhau ra
   for (let i=0;i<players.length;i++) for (let j=i+1;j<players.length;j++){
-    const a=players[i], c=players[j]; if (!a.alive||!c.alive) continue;
+    const a=players[i], c=players[j]; if (!a.alive||!c.alive||(a.remote&&c.remote)) continue;
     let dx=c.x-a.x, dz=c.z-a.z; const d=Math.hypot(dx,dz);
-    if (d<0.8&&d>1e-4){ const push=(0.8-d)/2; dx/=d; dz/=d; a.x-=dx*push; a.z-=dz*push; c.x+=dx*push; c.z+=dz*push; resolve(a); resolve(c); }
+    if (d<0.8&&d>1e-4){
+      const push=(0.8-d)/2, wa=a.remote?0:(c.remote?2:1), wc=c.remote?0:(a.remote?2:1);   // người chơi online do máy họ tự quyết, chỉ đẩy phía mình
+      dx/=d; dz/=d; a.x-=dx*push*wa; a.z-=dz*push*wa; c.x+=dx*push*wc; c.z+=dz*push*wc;
+      if (!a.remote) resolve(a); if (!c.remote) resolve(c);
+    }
   }
   // Tiếng bước chân (ngồi thì im lặng)
   for (const p of players){
@@ -1081,7 +1124,7 @@ function update(dt){
   }
   // Quay mặt vào tường quá lâu: 15s cảnh báo, 30s bị Admin loại
   for (const p of players){
-    if (!p.alive) continue;
+    if (!p.alive||p.remote) continue;
     if (facingWall(p)) p.wallT+=dt; else p.wallT=0;
     if (p.wallT>=CFG.WALL_KILL) eliminate(p,ADMIN);
   }
@@ -1127,12 +1170,246 @@ function syncVisuals(dt){
   scene.fog.near = zz>0?140:45; scene.fog.far = zz>0?420:150;
 }
 
+
+/* ================== ONLINE (Firebase Realtime Database) ================== */
+// Đường dẫn có số phiên bản: bản game khác nhau (bản đồ khác nhau) sẽ không vào chung phòng.
+const NET_VER='v1';
+const FB_CONFIG={
+  apiKey: "AIzaSyCtWpCTxQDX8QNUPXMv6Z2-0gjNwp0SCS8",
+  authDomain: "xamhuong-82e87.firebaseapp.com",
+  databaseURL: "https://xamhuong-82e87-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "xamhuong-82e87",
+  storageBucket: "xamhuong-82e87.firebasestorage.app",
+  messagingSenderId: "862412056925",
+  appId: "1:862412056925:web:44a821b440e0b4f8ade0b4"
+};
+const NET_HZ=10, NET_STALE=20000, ROSTER_STALE=25000, MAXP=10;   // gửi 10 lần/giây; 20-25 giây không thấy động tĩnh thì coi là mất kết nối
+const NETK={name:'online'};                           // "người hạ" khi bị loại qua mạng (không hiển thị)
+const myId='p'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+let fbDb=null;
+const onlMsgEl=$('onlMsg'), elLobby=$('lobby');
+function onlMsg(t,c){ onlMsgEl.textContent=t; onlMsgEl.style.color=c||'#ffd54a'; }
+function refreshOnl(){
+  const on=!!net;
+  $('ovLeave').style.display=on?'inline-block':'none';
+  $('ovJoin').textContent=on?'🌐 Đổi phòng':'🌐 Chơi online';
+  if (on) onlMsg(`Đang ở phòng ${net.code}${net.connected?'':' (đang kết nối…)'} – gửi mã này cho bạn bè.`,'#7fd1ff');
+}
+function fbInit(){
+  if (fbDb) return fbDb;
+  if (typeof firebase==='undefined') return null;
+  try{ if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG); fbDb=firebase.database(); }catch(err){ fbDb=null; }
+  return fbDb;
+}
+const r2=v=>Math.round(v*100)/100;
+const num=v=>(typeof v==='number'&&isFinite(v))?v:0;
+const validName=n=>typeof n==='string'&&/^[0-9]{4}$/.test(n);
+function hueOf(id){ let h=0; for (let i=0;i<id.length;i++) h=(h*31+id.charCodeAt(i))>>>0; return (h%360)/360; }
+const guard=fn=>(...a)=>{ try{ fn(...a); }catch(err){ console.warn('online:',err); } };
+
+/* --- Phòng chờ ---
+   Mỗi người có một nút trong phòng: w=1 đang ở phòng chờ, w=0 đang chơi, r = số ván, j = giờ vào phòng.
+   Chủ phòng = người vào sớm nhất (ai cũng tự tính ra như nhau). Chủ phòng bấm Bắt đầu -> ghi state {r, ids}.
+   Chỉ những người có tên trong ids (đang ở phòng chờ lúc bắt đầu) mới vào ván; người vào sau thì chờ ván kế. */
+function liveRoster(){            // danh sách người còn "sống" trong phòng, theo thứ tự vào phòng
+  const now=performance.now(), out=[{ id:myId, d:{ w:net.mode==='game'?0:1, j:net.j } }];
+  for (const [id,e] of net.roster) if (id!==myId && now-e.seen<ROSTER_STALE) out.push({ id, d:e.d });
+  out.sort((x,y)=>(num(x.d.j)-num(y.d.j))||(x.id<y.id?-1:1));
+  return out;
+}
+const netIsHost=lr=>lr.length>0&&lr[0].id===myId;
+function roundSpawns(r,n){        // vị trí xuất phát: mọi máy tính ra giống hệt nhau từ số ván
+  const rg=mulberry32(((r*2654435761)^CFG.SEED)>>>0), out=[];
+  for (let i=0;i<n;i++){
+    let x,z,t=0;
+    do { x=(rg()*2-1)*(CFG.HALF-6); z=(rg()*2-1)*(CFG.HALF-6); t++; } while(!spawnOk(x,z,out)&&t<300);
+    out.push({x,z});
+  }
+  return out;
+}
+function renderLobby(){
+  if (!net||net.mode!=='lobby'){ elLobby.style.display='none'; return; }
+  const lr=liveRoster(), lobbyN=lr.filter(e=>e.d.w!==0).length, playing=lr.length-lobbyN, host=netIsHost(lr);
+  const chips=lr.map((e,i)=>`<span class="chip${e.id===myId?' me':''}">${i===0?'👑 ':''}${e.id===myId?'Bạn':'Người chơi '+(i+1)}${e.d.w===0?' · đang chơi':''}</span>`).join('');
+  let msg;
+  if (playing>0) msg=`Ván đang diễn ra (${playing} người đang chơi). Bạn sẽ vào ván kế tiếp.`;
+  else if (lobbyN<2) msg='Chờ thêm người… gửi mã phòng cho bạn bè (cần ít nhất 2 người).';
+  else msg=host?'Đủ người rồi – bấm Bắt đầu ván khi sẵn sàng.':'Chờ chủ phòng (👑) bấm Bắt đầu…';
+  elLobby.innerHTML=`<div class="chips">${chips}</div><div class="lmsg">${msg}</div>`; elLobby.style.display='block';
+  ovBtn.textContent=host?'Bắt đầu ván':'Chờ chủ phòng…';
+  ovBtn.disabled=!(host&&playing===0&&lobbyN>=2);
+}
+function showLobby(title,text){
+  paused=true; closeType(); resetTouch(); $('howto').style.display='none'; ovRestart.style.display='none';
+  ovTitle.textContent=title||`PHÒNG CHỜ · ${net.code}`;
+  ovText.textContent=text||'Mỗi ván, mọi người xuất phát ở những chỗ cách xa nhau.';
+  ov.style.display='flex'; renderLobby(); refreshOnl();
+}
+function netStart(){
+  if (!net||net.mode!=='lobby') return;
+  const lr=liveRoster(); if (!netIsHost(lr)) return;
+  const lobby=lr.filter(e=>e.d.w!==0);
+  if (lobby.length<2||lobby.length<lr.length) return;
+  ovBtn.disabled=true;                                  // tránh bấm đúp
+  net.stateRef.set({ r:net.round+1, ids:lobby.slice(0,MAXP).map(e=>e.id), t:Date.now() });
+}
+function netState(st){
+  if (!net) return;
+  const s=(st&&typeof st==='object')?st:{}, r=num(s.r);
+  if (r>net.round){
+    net.round=r;
+    const ids=Array.isArray(s.ids)?s.ids.filter(x=>typeof x==='string'):[];
+    if (net.mode==='lobby'&&ids.includes(myId)) startRound(ids,r);
+  }
+  renderLobby();
+}
+function startRound(ids,r){
+  net.mode='game'; net.startCount=ids.length; net.t0=performance.now(); net.met=0;
+  newRoundOnline(roundSpawns(r,ids.length)[ids.indexOf(myId)]);
+  for (const [id,e] of net.roster) if (id!==myId) netChange(id,e.d);       // những người đã vào đấu trường trước mình
+  elLobby.style.display='none'; ovRestart.style.display='none'; ovBtn.disabled=false;
+  if (isTouch) startPlay();
+  else { paused=true; ovTitle.textContent='🎮 VÁN BẮT ĐẦU!'; ovText.textContent='Bấm "Vào trận" để bắt đầu.'; ovBtn.textContent='Vào trận'; ov.style.display='flex'; }
+  updateAlive();
+}
+
+function joinRoom(code){
+  const db=fbInit();
+  if (!db){ onlMsg('Không tải được Firebase. Kiểm tra mạng rồi mở lại game.','#ff8a80'); return false; }
+  if (net) leaveRoom(true);
+  const root=db.ref(`tenTrenTran/${NET_VER}/rooms/${code}`), base=root.child('players');
+  net={ code, base, stateRef:root.child('state'), mine:base.child(myId), conn:db.ref('.info/connected'), connected:false, acc:0, beat:0, sent:null,
+        remotes:new Map(), handlers:[], roster:new Map(), round:0, mode:'lobby', startCount:0, t0:0, j:Date.now() };
+  newRoundOnline(null);                                // nhân vật tạm của mình, chưa vào đấu trường
+  const on=(ref,ev,fn)=>{ const f=guard(fn); ref.on(ev,f); net.handlers.push([ref,ev,f]); };
+  const roster=(id,d)=>{ if (!d||typeof d!=='object') return; net.roster.set(id,{d,seen:performance.now()}); netChange(id,d); renderLobby(); };
+  on(base,'child_added',s=>roster(s.key,s.val()));
+  on(base,'child_changed',s=>roster(s.key,s.val()));
+  on(base,'child_removed',s=>{ net.roster.delete(s.key); if (s.key!==myId) removeRemote(s.key,false); renderLobby(); });
+  on(net.stateRef,'value',s=>netState(s.val()));
+  on(net.conn,'value',s=>{
+    net.connected=s.val()===true;
+    if (net.connected){ net.mine.onDisconnect().remove(); netFull(); flash(`Đã vào phòng ${net.code}`,'#7CFC00'); }
+    refreshOnl();
+  });
+  const c=net;
+  setTimeout(()=>{ if (net===c&&!c.connected){ onlMsg('Chưa kết nối được máy chủ… (kiểm tra mạng)','#ff8a80'); flash('Chưa kết nối được máy chủ online','#ff8a80'); } },7000);
+  showLobby();
+  return true;
+}
+function leaveRoom(silent){
+  if (!net) return;
+  const n=net; net=null;
+  for (const [ref,ev,f] of n.handlers) { try{ ref.off(ev,f); }catch(err){} }
+  try{ n.mine.onDisconnect().cancel(); n.mine.remove(); }catch(err){}
+  for (const p of n.remotes.values()){ scene.remove(p.group); p.tex.dispose(); }
+  players=players.filter(p=>!p.remote); spectate=null;
+  elLobby.style.display='none';
+  if (!silent){ newRound(); }        // net=null: quay về ván với bot
+  refreshOnl();
+}
+function netFull(){
+  if (!net||!human) return;
+  net.mine.set({ n:human.name, x:r2(human.x), z:r2(human.z), y:r2(human.y), h:r2(human.h), c:human.crouch?1:0, a:human.alive?1:0,
+                 w:net.mode==='game'?0:1, r:net.round, j:net.j, t:Date.now() });
+  net.sent={x:human.x,z:human.z,y:human.y,h:human.h,c:human.crouch};
+}
+function newRoundOnline(spawn){
+  for (const p of players){ if (!p.remote){ scene.remove(p.group); p.tex.dispose(); } }
+  const remotes=players.filter(p=>p.remote);
+  over=false; spectate=null; cooldown=0; pitch=0; zoom=0;
+  elBanner.style.display='none'; elFeed.innerHTML='';
+  let x,z,tries=0;
+  if (spawn){ x=spawn.x; z=spawn.z; }
+  else do { x=(Math.random()*2-1)*(CFG.HALF-6); z=(Math.random()*2-1)*(CFG.HALF-6); tries++; } while(!spawnOk(x,z,remotes) && tries<300);
+  const name=genName(new Set(remotes.map(p=>p.name)));
+  const ch=makeChar(new THREE.Color().setHSL(hueOf(myId),0.65,0.5), name);
+  scene.add(ch.group);
+  const me=Object.assign({
+    id:myId, name, human:true, alive:true, x, z, h:Math.random()*Math.PI*2, deathT:0,
+    read:{}, mode:'roam', think:0, goal:null, pause:0, scan:0, stuck:0, stuckT:0, lastX:x, lastZ:z,
+    target:null, threatPos:null, crouch:false, y:0, vy:0, grounded:true, wallT:0, ck:0, spd:0, px:x, pz:z, stepD:0, heard:null, running:false, aggr:0.5, readNeed:1
+  }, ch);
+  players=[me,...remotes]; human=me;
+  wallWarned=false; elWall.style.display='none';
+  updateAlive();
+  netFull();
+}
+function addRemote(id,d){
+  const ch=makeChar(new THREE.Color().setHSL(hueOf(id),0.65,0.5), d.n);
+  scene.add(ch.group);
+  const x=num(d.x), z=num(d.z), y=num(d.y), h=num(d.h), alive=d.a!==0;
+  const p=Object.assign({
+    id, name:d.n, human:false, remote:true, alive, x, z, y, h, tx:x, tz:z, ty:y, th:h, tc:!!d.c, last:performance.now(), air:0,
+    deathT:alive?0:10, read:{}, crouch:!!d.c, vy:0, grounded:true, wallT:0, ck:d.c?1:0, spd:0, px:x, pz:z, stepD:0, running:false, heard:null
+  }, ch);
+  if (!alive){ p.tag.visible=false; p.body.material.color.set(0x777777); }
+  players.push(p); net.remotes.set(id,p); net.met=(net.met||0)+1;
+  updateAlive();
+}
+function removeRemote(id,quiet){
+  const p=net&&net.remotes.get(id); if (!p) return;
+  scene.remove(p.group); p.tex.dispose();
+  players=players.filter(q=>q!==p); net.remotes.delete(id);
+  if (spectate===p) spectate=null;
+  updateAlive();
+  if (!quiet) netCheckEnd();
+}
+function netChange(id,d){
+  if (!net||!d||typeof d!=='object') return;
+  if (id===myId){                                       // người khác đã gõ đúng tên mình
+    if (d.a===0&&net.mode==='game'&&human&&human.alive&&!over) eliminate(human,NETK);
+    return;
+  }
+  const inArena=net.mode==='game'&&d.w===0&&d.r===net.round&&validName(d.n);
+  let p=net.remotes.get(id);
+  if (!inArena){ if (p) removeRemote(id,false); return; }       // chưa vào ván này, hoặc đã rời đấu trường
+  if (!p){ addRemote(id,d); return; }
+  if (d.n!==p.name){ removeRemote(id,true); addRemote(id,d); return; }
+  if (d.a===0&&p.alive) eliminate(p,NETK);
+  p.tx=num(d.x); p.tz=num(d.z); p.ty=num(d.y); p.th=num(d.h); p.tc=!!d.c; p.last=performance.now();
+}
+function netEliminated(v,k){
+  if (k===human&&v.remote) net.base.child(v.id).update({a:0});     // mình gõ đúng tên họ
+  else if (v===human&&k===ADMIN) net.mine.update({a:0});          // mình bị Admin loại
+}
+function netCheckEnd(){
+  if (!net||over||!human||net.mode!=='game') return;
+  const alive=players.filter(p=>p.alive);
+  if (players.length>=2&&alive.length<=1) endGame(alive[0]||null);
+  else if (players.length===1&&human.alive&&net.met>0) endGame(human);          // những người từng có mặt đều đã rời
+}
+function updateRemotes(dt){
+  const k=1-Math.exp(-dt*14), now=performance.now();
+  for (const p of [...net.remotes.values()]){
+    if (now-p.last>NET_STALE){ removeRemote(p.id,true); continue; }
+    if (!p.alive) continue;
+    p.x+=(p.tx-p.x)*k; p.z+=(p.tz-p.z)*k; p.y+=(p.ty-p.y)*k; p.h+=angDiff(p.h,p.th)*k; p.crouch=p.tc;
+    const was=p.grounded; p.grounded=(p.y-floorAt(p.x,p.z,p.y))<0.06;
+    if (!p.grounded) p.air+=dt; else { if (!was&&p.air>0.3) landed(p); p.air=0; }
+  }
+  if (!over&&net.mode==='game'&&human.alive&&players.length===1&&net.startCount>1&&now-net.t0>8000) endGame(human);   // những người cùng ván không bao giờ vào
+}
+function netTick(dt){
+  net.acc+=dt; net.beat+=dt;
+  if (net.acc<1/NET_HZ||!net.connected) return;
+  net.acc=0;
+  const s=net.sent, m=human, d={};
+  if (net.mode==='game'&&m.alive&&(!s||Math.abs(m.x-s.x)>0.02||Math.abs(m.z-s.z)>0.02||Math.abs(m.y-s.y)>0.02||Math.abs(angDiff(s.h,m.h))>0.02||m.crouch!==s.c)){
+    d.x=r2(m.x); d.z=r2(m.z); d.y=r2(m.y); d.h=r2(m.h); d.c=m.crouch?1:0;
+    net.sent={x:m.x,z:m.z,y:m.y,h:m.h,c:m.crouch};
+  }
+  if (net.beat>=3){ net.beat=0; d.t=Date.now(); }          // báo "mình vẫn còn đây"
+  if (Object.keys(d).length) net.mine.update(d);
+}
+setInterval(()=>{ if (net&&net.mode==='lobby') renderLobby(); },1500);     // cập nhật danh sách (kể cả khi có người mất kết nối)
+
 newRound();
 let last=performance.now();
 function loop(now){
   requestAnimationFrame(loop);
   const dt=Math.min(0.05,(now-last)/1000); last=now;
-  if (active() && !over && !paused) update(dt);
+  if (active() && !over && !paused) update(dt); else if (net) netTick(dt);      // đang ở phòng chờ / tạm dừng: vẫn báo "còn đây"
   syncVisuals(paused||!active()?0:dt);
   renderer.render(scene,camera);
   drawMini(); updateHud();
