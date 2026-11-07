@@ -186,9 +186,9 @@ const CFG = {
   READ_RANGE: 16,        // xa nhất có thể đọc được bảng tên (m)
   READ_TIME: 1.0,        // thời gian bot cần để đọc + gõ tên (giây)
   GUESS_COOLDOWN: 2.0,   // bị khóa bàn phím khi gõ sai (giây)
-  WALK: 3.75, RUN: 6.4,      // đã giảm 25%
-  BOT_WALK: 2.85, BOT_RUN: 5.1,
-  STEP_MIN: 1.65, RUN_MIN: 4.65,   // ngưỡng tốc độ để có tiếng bước / tiếng chạy
+  WALK: 3.19, RUN: 5.44,     // đã giảm 25% rồi giảm thêm 15%
+  BOT_WALK: 2.42, BOT_RUN: 4.34,
+  STEP_MIN: 1.40, RUN_MIN: 3.95,   // ngưỡng tốc độ để có tiếng bước / tiếng chạy
   R: 0.4,                // bán kính va chạm nhân vật
   EYE: 1.55, EYE_C: 1.0,  // độ cao mắt khi đứng / ngồi
   TAG: 1.48, TAG_C: 0.98, // độ cao bảng tên khi đứng / ngồi
@@ -1094,7 +1094,7 @@ function sfx(kind){
   else if (kind==='wrong'){ tone(170,0,0.25,'square',0.28,120); }                                                                 // gõ sai tên
   else if (kind==='ping'){ tone(1300,0,0.08,'sine',0.35); tone(1300,0.14,0.08,'sine',0.35); }                                     // radar báo động
 }
-const RADAR_R=30, RADAR_ALERT=14; let lastPing=0;
+const RADAR_R=25, RADAR_ALERT=12; let lastPing=0;
 const REVEAL_EVERY=5, REVEAL_LEN=1;   // chỉ còn 2 người: cứ 5 giây, vị trí của nhau hiện trên mini map trong 1 giây
 let revealT=0, revealOn=false;
 const elScope=$('scope'), elZl=$('zlbl'), elStance=$('stance'), elCross=$('cross');
