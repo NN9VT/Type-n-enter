@@ -37,6 +37,7 @@ body.touch #deskHint{display:none}
 #roomCode{font-size:20px;font-weight:700;text-transform:uppercase;text-align:center;width:10.5em;max-width:56vw;padding:9px;border-radius:9px;border:2px solid #ffd54a;background:#111;color:#fff;outline:none}
 #onl button{margin-top:0;font-size:17px;padding:10px 18px;background:#7fd1ff}
 #onlMsg{font-size:13px;color:#ffd54a;margin-top:6px;min-height:16px}
+#ov.result #onl,#ov.result #lobby{display:none}
 #ovLeave{display:none;background:#9aa4ad;margin-left:10px}
 #ov button:disabled{opacity:.45}
 #lobby{display:none;margin:8px 0}
@@ -160,7 +161,7 @@ body.touch #typebox small{display:none}
     <p id="rotHint">📱 Hãy xoay ngang điện thoại để chơi</p>
     <details id="howto"><summary>Cách chơi &amp; điều khiển</summary>
       <p>Tên trên trán gồm <b>4 chữ số</b> (ví dụ 4729, 0583). Gõ sai tên sẽ bị khóa bàn phím vài giây. Khi chỉ còn 2 người, cứ 5 giây vị trí của cả hai sẽ hiện trên mini map trong 1 giây. Quay mặt vào tường quá 15 giây sẽ bị cảnh báo, quá 30 giây sẽ bị <b>Admin</b> loại. Tường thấp chỉ che được khi bạn <b>ngồi</b> – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> để đọc tên từ xa. Có vài bậc thang thùng và bục đá có thể <b>nhảy</b> lên để quan sát từ trên cao, nhưng ở trên đó ai cũng dễ thấy bạn hơn. Radar nhỏ ở góc trái chấm đỏ khi có người ở gần (người đang ngồi thì không hiện).</p>
-      <p><b>Online:</b> các máy nhập <b>cùng một mã phòng</b> rồi bấm <b>Chơi online</b> (ví dụ 1234) để vào <b>phòng chờ</b>. Người vào đầu tiên là chủ phòng (👑) và bấm <b>Bắt đầu ván</b> khi đủ ít nhất 2 người (tối đa 10). Ván online chỉ có người thật, không có bot. Đặt tên của bạn (tối đa 10 ký tự) ở menu: tên sẽ hiện trong phòng chờ, khi bị loại và khi thắng; có thể chat (tối đa 20 ký tự). Ai vào sau khi ván đã bắt đầu sẽ chờ ở phòng chờ đến ván kế tiếp; hết ván cả phòng quay về phòng chờ. Mọi người phải dùng cùng một phiên bản file game.</p>
+      <p><b>Online:</b> các máy nhập <b>cùng một mã phòng</b> rồi bấm <b>Chơi online</b> (ví dụ 1234) để vào <b>phòng chờ</b>. Người vào đầu tiên là chủ phòng (👑) và bấm <b>Bắt đầu ván</b> khi đủ ít nhất 2 người (tối đa 10). Ván online chỉ có người thật, không có bot. Đặt tên của bạn (tối đa 10 ký tự) ở menu: tên sẽ hiện trong phòng chờ, khi bị loại và khi thắng; có thể chat (tối đa 20 ký tự). Ván đã bắt đầu thì không ai vào thêm được; hết ván phòng được giải tán và mọi người về menu chính (muốn chơi lại thì nhập mã phòng để vào phòng chờ mới). Mọi người phải dùng cùng một phiên bản file game.</p>
       <p id="deskHint"><b>Máy tính:</b> WASD đi · Shift chạy · Space nhảy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Enter gõ tên · T chat (online) · Esc menu.</p>
       <p id="touchHint">📱 <b>Cảm ứng:</b> chạm nửa trái màn hình để hiện cần gạt di chuyển (gạt xa là chạy) · kéo ngón tay ở nửa phải để nhìn quanh · nút <b>GÕ TÊN</b> khi thấy bảng tên đối thủ · <b>NHẢY</b> · <b>NGỒI</b> · <b>ỐNG DÒM</b> (bật; bấm <b>THOÁT</b> để tắt, <b>ZOOM</b> để đổi mức).</p>
     </details>
@@ -561,7 +562,7 @@ const MENU_TITLE=ovTitle.textContent, MENU_TEXT=ovText.innerHTML;   // nội dun
 let atMenu=true;                                                   // đang ở menu chính (chưa vào ván)
 let chatting=false;
 function showMainMenu(){
-  paused=true; closeType(); closeChat(); resetTouch(); atMenu=true;
+  paused=true; closeType(); closeChat(); resetTouch(); atMenu=true; resultOnline=false; ov.classList.remove('result');
   ovTitle.textContent=MENU_TITLE; ovText.innerHTML=MENU_TEXT; $('howto').style.display='';
   ovBtn.textContent='Bắt đầu'; ovBtn.disabled=false; ovRestart.style.display='none'; $('lobby').style.display='none';
   ov.style.display='flex'; refreshOnl();
@@ -779,8 +780,12 @@ function endGame(w){
   if (document.exitPointerLock) document.exitPointerLock();
   ovTitle.textContent = w===human ? '🏆 BẠN THẮNG!' : (w ? `${label(w)} thắng` : 'Hòa');
   ovText.textContent = w===human ? 'Bạn là người cuối cùng còn trụ lại.' : (human.alive ? '' : `Tên trên trán bạn là ${human.name}.`);
-  if (net){ net.mode='lobby'; try{ net.mine.update({w:1}); }catch(err){} }     // hết ván: cả phòng về phòng chờ
-  ovBtn.textContent='Chơi lại'; ovBtn.disabled=false; ov.style.display='flex'; refreshOnl(); if (net) renderLobby();
+  if (net){                                         // hết ván online: giải tán phòng, không còn gì liên quan tới phòng cũ
+    try{ net.stateRef.remove(); }catch(err){}
+    leaveRoom(true); resultOnline=true; ov.classList.add('result'); onlMsg('');
+    ovBtn.textContent='Về menu chính'; ovBtn.disabled=false; ov.style.display='flex'; refreshOnl(); return;
+  }
+  ovBtn.textContent='Chơi lại'; ovBtn.disabled=false; ov.style.display='flex'; refreshOnl();
 }
 
 /* ================== NHẬP TÊN ================== */
@@ -896,7 +901,7 @@ function goLandscape(){
   }catch(err){}
 }
 function startPlay(){
-  ov.style.display='none'; paused=false; atMenu=false; ovRestart.style.display='none'; initAudio();
+  ov.style.display='none'; paused=false; atMenu=false; resultOnline=false; ov.classList.remove('result'); ovRestart.style.display='none'; initAudio();
   if (isTouch){
     fallback=true;
     goLandscape();
@@ -905,6 +910,7 @@ function startPlay(){
   if (canvas.requestPointerLock) canvas.requestPointerLock(); else fallback=true;
 }
 ovBtn.addEventListener('click',()=>{
+  if (resultOnline){ resultOnline=false; ov.classList.remove('result'); newRound(); onlMsg(''); showMainMenu(); return; }
   if (net&&net.mode==='lobby'){ netStart(); return; }      // phòng chờ: chủ phòng bấm Bắt đầu
   if (over&&!net) newRound();
   startPlay();
@@ -1254,6 +1260,10 @@ const FB_CONFIG={
 };
 const NET_HZ=10, NET_STALE=20000, ROSTER_STALE=25000, MAXP=10;   // gửi 10 lần/giây; 20-25 giây không thấy động tĩnh thì coi là mất kết nối
 const NETK={name:'online'};                           // "người hạ" khi bị loại qua mạng (không hiển thị)
+let serverOffset=0, resultOnline=false, joinTok=0;
+const serverNow=()=>Date.now()+serverOffset;
+const isLive=d=>serverNow()-num(d&&d.t)<ROSTER_STALE;
+const TS=()=>{ try{ return firebase.database.ServerValue.TIMESTAMP; }catch(err){ return serverNow(); } };
 const myId='p'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
 let fbDb=null;
 const onlMsgEl=$('onlMsg'), elLobby=$('lobby'), elLobbyList=$('lobbyList');
@@ -1310,7 +1320,7 @@ setInterval(()=>{ if (chatLines.length) renderChat(); },1000);
 function onlMsg(t,c){ onlMsgEl.textContent=t; onlMsgEl.style.color=c||'#ffd54a'; }
 function refreshOnl(){
   const on=!!net;
-  $('ovLeave').style.display=atMenu?'none':'inline-block';
+  $('ovLeave').style.display=(atMenu||resultOnline)?'none':'inline-block';
   $('ovLeave').textContent=on?'Rời phòng online':'Rời phòng';
   ov.classList.toggle('inroom',on);
   elChatBtn.style.display=on?'block':'none';
@@ -1334,8 +1344,8 @@ const guard=fn=>(...a)=>{ try{ fn(...a); }catch(err){ console.warn('online:',err
    Chủ phòng = người vào sớm nhất (ai cũng tự tính ra như nhau). Chủ phòng bấm Bắt đầu -> ghi state {r, ids}.
    Chỉ những người có tên trong ids (đang ở phòng chờ lúc bắt đầu) mới vào ván; người vào sau thì chờ ván kế. */
 function liveRoster(){            // danh sách người còn "sống" trong phòng, theo thứ tự vào phòng
-  const now=performance.now(), out=[{ id:myId, d:{ w:net.mode==='game'?0:1, j:net.j } }];
-  for (const [id,e] of net.roster) if (id!==myId && now-e.seen<ROSTER_STALE) out.push({ id, d:e.d });
+  const out=[{ id:myId, d:{ w:net.mode==='game'?0:1, j:net.j } }];
+  for (const [id,e] of net.roster) if (id!==myId && isLive(e.d)) out.push({ id, d:e.d });
   out.sort((x,y)=>(num(x.d.j)-num(y.d.j))||(x.id<y.id?-1:1));
   return out;
 }
@@ -1362,7 +1372,7 @@ function renderLobby(){
   ovBtn.disabled=!(host&&playing===0&&lobbyN>=2);
 }
 function showLobby(title,text){
-  paused=true; atMenu=false; closeType(); resetTouch(); $('howto').style.display='none'; ovRestart.style.display='none';
+  paused=true; atMenu=false; resultOnline=false; ov.classList.remove('result'); closeType(); resetTouch(); $('howto').style.display='none'; ovRestart.style.display='none';
   ovTitle.textContent=title||`PHÒNG CHỜ · ${net.code}`;
   ovText.textContent=text||'Mỗi ván, mọi người xuất phát ở những chỗ cách xa nhau.';
   ov.style.display='flex'; renderLobby(); refreshOnl();
@@ -1373,7 +1383,7 @@ function netStart(){
   const lobby=lr.filter(e=>e.d.w!==0);
   if (lobby.length<2||lobby.length<lr.length) return;
   ovBtn.disabled=true;                                  // tránh bấm đúp
-  net.stateRef.set({ r:net.round+1, ids:lobby.slice(0,MAXP).map(e=>e.id), t:Date.now() });
+  net.stateRef.set({ r:net.round+1, ids:lobby.slice(0,MAXP).map(e=>e.id), t:TS() });
 }
 function netState(st){
   if (!net) return;
@@ -1399,7 +1409,21 @@ function joinRoom(code){
   const db=fbInit();
   if (!db){ onlMsg('Không tải được Firebase. Kiểm tra mạng rồi mở lại game.','#ff8a80'); return false; }
   if (net) leaveRoom(true);
-  const root=db.ref(`tenTrenTran/${NET_VER}/rooms/${code}`), base=root.child('players');
+  const tok=++joinTok, root=db.ref(`tenTrenTran/${NET_VER}/rooms/${code}`);
+  onlMsg('Đang kiểm tra phòng…','#7fd1ff');
+  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+  Promise.race([Promise.all([db.ref('.info/serverTimeOffset').once('value'), root.child('players').once('value')]),timeout]).then(([off,snap])=>{
+    if (tok!==joinTok||net) return;
+    serverOffset=num(off.val());
+    const live=[]; snap.forEach(c=>{ const d=c.val(); if (d&&typeof d==='object'&&isLive(d)) live.push(d); });
+    if (live.some(d=>d.w===0)){ onlMsg(`Phòng ${code} đang trong ván, chưa thể vào. Hãy chờ ván kết thúc hoặc dùng mã phòng khác.`,'#ff8a80'); return; }
+    if (!live.length){ try{ root.remove(); }catch(err){} }      // phòng cũ không còn ai: dọn sạch dữ liệu thừa
+    doJoin(code,db,root);
+  }).catch(()=>{ if (tok===joinTok) onlMsg('Chưa kết nối được máy chủ… (kiểm tra mạng rồi thử lại)','#ff8a80'); });
+  return true;
+}
+function doJoin(code,db,root){
+  const base=root.child('players');
   net={ code, base, stateRef:root.child('state'), mine:base.child(myId), conn:db.ref('.info/connected'), connected:false, acc:0, beat:0, sent:null,
         remotes:new Map(), handlers:[], roster:new Map(), round:0, mode:'lobby', startCount:0, t0:0, j:Date.now(),
         nick:cleanNick(elNick.value)||'Khách', chatSeen:new Map(), lastChat:0 };
@@ -1432,7 +1456,6 @@ function joinRoom(code){
   const c=net;
   setTimeout(()=>{ if (net===c&&!c.connected){ onlMsg('Chưa kết nối được máy chủ… (kiểm tra mạng)','#ff8a80'); flash('Chưa kết nối được máy chủ online','#ff8a80'); } },7000);
   showLobby();
-  return true;
 }
 function leaveRoom(silent){
   if (!net) return;
@@ -1449,7 +1472,7 @@ function leaveRoom(silent){
 function netFull(){
   if (!net||!human) return;
   net.mine.set({ n:human.name, x:r2(human.x), z:r2(human.z), y:r2(human.y), h:r2(human.h), c:human.crouch?1:0, a:human.alive?1:0,
-                 w:net.mode==='game'?0:1, r:net.round, j:net.j, nk:net.nick, t:Date.now() });
+                 w:net.mode==='game'?0:1, r:net.round, j:net.j, nk:net.nick, t:TS() });
   net.sent={x:human.x,z:human.z,y:human.y,h:human.h,c:human.crouch};
 }
 function newRoundOnline(spawn){
@@ -1527,7 +1550,11 @@ function updateRemotes(dt){
     const was=p.grounded; p.grounded=(p.y-floorAt(p.x,p.z,p.y))<0.06;
     if (!p.grounded) p.air+=dt; else { if (!was&&p.air>0.3) landed(p); p.air=0; }
   }
-  if (!over&&net.mode==='game'&&human.alive&&players.length===1&&net.startCount>1&&now-net.t0>8000) endGame(human);   // những người cùng ván không bao giờ vào
+  if (!over&&net.mode==='game'&&players.length===1&&net.met===0&&net.startCount>1&&now-net.t0>8000) cancelRound();   // những người cùng ván không bao giờ vào
+}
+function cancelRound(){                    // không ai khác vào được: hủy ván, về phòng chờ (không bao giờ chơi một mình)
+  net.mode='lobby'; try{ net.mine.update({w:1}); }catch(err){}
+  newRoundOnline(null); showLobby(undefined,'Ván bị hủy vì những người khác chưa vào được. Chủ phòng hãy bắt đầu lại.');
 }
 function netTick(dt){
   net.acc+=dt; net.beat+=dt;
@@ -1538,7 +1565,7 @@ function netTick(dt){
     d.x=r2(m.x); d.z=r2(m.z); d.y=r2(m.y); d.h=r2(m.h); d.c=m.crouch?1:0;
     net.sent={x:m.x,z:m.z,y:m.y,h:m.h,c:m.crouch};
   }
-  if (net.beat>=3){ net.beat=0; d.t=Date.now(); }          // báo "mình vẫn còn đây"
+  if (net.beat>=3){ net.beat=0; d.t=TS(); }          // báo "mình vẫn còn đây"
   if (Object.keys(d).length) net.mine.update(d);
 }
 setInterval(()=>{ if (net&&net.mode==='lobby') renderLobby(); },1500);     // cập nhật danh sách (kể cả khi có người mất kết nối)
