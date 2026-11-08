@@ -39,6 +39,20 @@ body.touch #deskHint{display:none}
 #onlMsg{font-size:13px;color:#ffd54a;margin-top:6px;min-height:16px}
 #ver{position:absolute;right:12px;bottom:8px;font:600 12px/1 sans-serif;color:rgba(255,255,255,.55);pointer-events:none}
 #ov.result #onl,#ov.result #lobby{display:none}
+#board{display:none;margin:8px auto 4px;max-width:560px;max-height:44vh;overflow-y:auto;text-align:left;border-radius:10px;background:rgba(255,255,255,.07);padding:4px 6px}
+#ov.result #board{display:block}
+#board .brow{display:grid;grid-template-columns:30px 1fr;gap:1px 8px;padding:6px 6px;border-bottom:1px solid rgba(255,255,255,.08)}
+#board .brow:last-child{border-bottom:0}
+#board .brow.win{background:rgba(255,213,74,.14);border-radius:8px}
+#board .brow.me .bn{color:#7fd1ff}
+#board .rk{grid-row:span 2;font-size:18px;font-weight:800;text-align:center;align-self:center;color:#aab2bb}
+#board .brow.win .rk{color:#ffd54a}
+#board .bn{font-weight:800;font-size:15px}
+#board .bn small{font-weight:600;color:#8b949e;font-size:12px;margin-left:4px}
+#board .bi{font-size:13px;color:#d7dde3}
+#board .bi b{color:#ffd54a}
+#board .by{color:#ff8a80}
+#board .adm{color:#ffd54a}
 #ovLeave{display:none;background:#9aa4ad;margin-left:10px}
 #ov button:disabled{opacity:.45}
 #lobby{display:none;margin:8px 0}
@@ -158,15 +172,16 @@ body.touch #typebox small{display:none}
   <button id="btnExit">⟲ Menu</button>
 </div>
 <div id="ov">
-  <div id="ver">ver1.4</div>
+  <div id="ver">ver1.5</div>
   <div class="card">
     <h1 id="ovTitle">TỚI SỐ</h1>
     <p id="ovText">Mỗi người có một dãy số dán trên trán – bạn không thấy dãy số của mình, nhưng người khác thì thấy. <b>Gõ đúng dãy số</b> của đối thủ để loại họ; ai bị gõ đúng tên là thua. Hãy nấp, ngồi, nhảy, nghe tiếng bước chân và đừng quay mặt về phía kẻ địch!</p>
     <div id="lobby"><div id="lobbyList"></div><div id="botrow"><span>🤖 Bot:</span><button id="botMinus">−</button><b id="botN">0</b><button id="botPlus">+</button><small>(tối đa 5)</small></div><div id="lchat"></div><div id="lform"><input id="lchatin" maxlength="20" placeholder="Chat (tối đa 20 ký tự)" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="send"><button id="lsend">Gửi</button></div></div>
+    <div id="board"></div>
     <p id="rotHint">📱 Hãy xoay ngang điện thoại để chơi</p>
     <details id="howto"><summary>Cách chơi &amp; điều khiển</summary>
       <p>Dãy số trên trán gồm <b>4 chữ số</b> (ví dụ 4729, 0583). Gõ sai dãy số sẽ bị khóa bàn phím vài giây. Khi chỉ còn 2 người, cứ 5 giây vị trí của cả hai sẽ hiện trên mini map trong 1 giây. Quay mặt vào tường quá 15 giây sẽ bị cảnh báo, quá 30 giây sẽ bị <b>Admin</b> loại. Tường thấp chỉ che được khi bạn <b>ngồi</b> – đứng lên là lộ đầu. Đi khi ngồi sẽ không có tiếng bước chân. Dùng <b>ống dòm</b> để đọc tên từ xa. Có vài bậc thang thùng và bục đá có thể <b>nhảy</b> lên để quan sát từ trên cao, nhưng ở trên đó ai cũng dễ thấy bạn hơn. Radar nhỏ ở góc trái chấm đỏ khi có người ở gần (người đang ngồi thì không hiện).</p>
-      <p><b>Online:</b> các máy nhập <b>cùng một mã phòng</b> rồi bấm <b>Chơi online</b> (ví dụ 1234) để vào <b>phòng chờ</b>. Người vào đầu tiên là chủ phòng (👑) và bấm <b>Bắt đầu ván</b> khi đủ ít nhất 2 người (tối đa 10). Chủ phòng có thể thêm tối đa 5 bot (nút 🤖 trong phòng chờ); ván vẫn cần ít nhất 2 người thật, bot chạy trên máy chủ phòng nên chủ phòng thoát thì bot cũng biến mất. Đặt tên của bạn (tối đa 10 ký tự) ở menu: tên sẽ hiện trong phòng chờ, khi bị loại và khi thắng; có thể chat (tối đa 20 ký tự). Ván đã bắt đầu thì không ai vào thêm được; hết ván phòng được giải tán và mọi người về menu chính (muốn chơi lại thì nhập mã phòng để vào phòng chờ mới). Mọi người phải dùng cùng một phiên bản file game.</p>
+      <p><b>Online:</b> các máy nhập <b>cùng một mã phòng</b> rồi bấm <b>Chơi online</b> (ví dụ 1234) để vào <b>phòng chờ</b>. Người vào đầu tiên là chủ phòng (👑) và bấm <b>Bắt đầu ván</b> khi đủ ít nhất 2 người (tối đa 10). Chủ phòng có thể thêm tối đa 5 bot (nút 🤖 trong phòng chờ); ván vẫn cần ít nhất 2 người thật và kết thúc khi chỉ còn 1 người thật còn sống (bot không tính), cuối ván có bảng xếp hạng, bot chạy trên máy chủ phòng nên chủ phòng thoát thì bot cũng biến mất. Đặt tên của bạn (tối đa 10 ký tự) ở menu: tên sẽ hiện trong phòng chờ, khi bị loại và khi thắng; có thể chat (tối đa 20 ký tự). Ván đã bắt đầu thì không ai vào thêm được; hết ván phòng được giải tán và mọi người về menu chính (muốn chơi lại thì nhập mã phòng để vào phòng chờ mới). Mọi người phải dùng cùng một phiên bản file game.</p>
       <p id="deskHint"><b>Máy tính:</b> WASD đi · Shift chạy · Space nhảy · C ngồi · B bật/tắt ống dòm (lăn chuột đổi zoom) · Enter gõ tên · T chat (online) · Esc menu.</p>
       <p id="touchHint">📱 <b>Cảm ứng:</b> chạm nửa trái màn hình để hiện cần gạt di chuyển (gạt xa là chạy) · kéo ngón tay ở nửa phải để nhìn quanh · nút <b>GÕ TÊN</b> khi thấy bảng tên đối thủ · <b>NHẢY</b> · <b>NGỒI</b> · <b>ỐNG DÒM</b> (bật; bấm <b>THOÁT</b> để tắt, <b>ZOOM</b> để đổi mức).</p>
     </details>
@@ -769,6 +784,7 @@ const label=p=>net ? `${p.nick||'Khách'}[${p.name}]` : (p.human?'BẠN':p.name)
 function eliminate(v,k){
   if (!v.alive||over) return;
   v.alive=false; v.deathT=0; v.tag.visible=false; v.body.material.color.set(0x777777);
+  if (net&&net.kills) net.kills.push({ k:killerId(k), v:String(v.id) });          // ghi lại ai hạ ai (cho bảng xếp hạng)
   if (v===human) sfx('lose'); else if (k===human) sfx('win');
   const row=document.createElement('div'), nm=document.createElement('span'); nm.className='dead'+(k&&k.admin?' admin':''); nm.textContent=label(v); row.appendChild(nm); elFeed.appendChild(row);
   setTimeout(()=>row.remove(),7000);
@@ -779,8 +795,16 @@ function eliminate(v,k){
   }
   if (net) netEliminated(v,k);
   updateAlive();
+  if (net){ netCheckEnd(); return; }                       // online: kết thúc khi chỉ còn 1 người thật
   const alive=players.filter(p=>p.alive);
   if (alive.length<=1) endGame(alive[0]||null);
+}
+function killerId(k){
+  if (k===NETK) return netKillerId;
+  if (k===human) return myId;
+  if (k&&k.admin) return 'admin';
+  if (k&&k.id!==undefined) return String(k.id);
+  return null;
 }
 function pickSpectate(){
   const a=players.filter(p=>p.alive&&p!==human);
@@ -796,6 +820,7 @@ function endGame(w){
   ovTitle.textContent = w===human ? '🏆 BẠN THẮNG!' : (w ? `${label(w)} thắng` : 'Hòa');
   ovText.textContent = w===human ? 'Bạn là người cuối cùng còn trụ lại.' : (human.alive ? '' : `Dãy số trên trán bạn là ${human.name}.`);
   if (net){                                         // hết ván online: giải tán phòng, không còn gì liên quan tới phòng cũ
+    $('board').innerHTML=buildBoard(w);
     try{ net.stateRef.remove(); net.cfg.remove(); net.bots.remove(); }catch(err){}
     leaveRoom(true); resultOnline=true; ov.classList.add('result'); onlMsg('');
     ovBtn.textContent='Về menu chính'; ovBtn.disabled=false; ov.style.display='flex'; refreshOnl(); return;
@@ -1276,6 +1301,7 @@ const FB_CONFIG={
   appId: "1:862412056925:web:44a821b440e0b4f8ade0b4"
 };
 const NET_HZ=10, NET_STALE=20000, ROSTER_STALE=25000, MAXP=10;   // gửi 10 lần/giây; 20-25 giây không thấy động tĩnh thì coi là mất kết nối
+let netKillerId=null;                                      // người hạ (id) khi bị loại do máy khác báo
 const NETK={name:'online'};                           // "người hạ" khi bị loại qua mạng (không hiển thị)
 let serverOffset=0, resultOnline=false, joinTok=0;
 const serverNow=()=>Date.now()+serverOffset;
@@ -1381,6 +1407,7 @@ function spawnBots(r,nh,nb){
       target:null, threatPos:null, crouch:false, y:0, vy:0, grounded:true, wallT:0, ck:0, spd:0, px:x, pz:z, stepD:0, heard:null, running:false, aggr:0.3+Math.random()*0.6, readNeed:CFG.READ_TIME*(0.8+Math.random()*0.6)
     }, ch);
     b.sent={x,z,y:0,h:b.h,c:false};
+    net.who[id]={ nick:'Bot', name, bot:true };
     players.push(b); net.myBots.push(b);
     net.bots.child(id).set({ n:name, nk:'Bot', x:r2(x), z:r2(z), y:0, h:r2(b.h), c:0, a:1, w:0, r:net.round, bt:1, t:TS() });
   }
@@ -1445,6 +1472,7 @@ function netState(st){
 }
 function startRound(ids,r,nb,hid){
   net.mode='game'; net.startCount=ids.length; net.t0=performance.now(); net.met=0;
+  net.kills=[]; net.who={};
   newRoundOnline(roundSpawns(r,ids.length+nb)[ids.indexOf(myId)]);
   net.myBots=[];
   for (const [id,e] of net.roster) if (id!==myId) netChange(id,e.d);       // những người đã vào đấu trường trước mình
@@ -1477,7 +1505,7 @@ function doJoin(code,db,root){
   const base=root.child('players');
   net={ code, base, root, bots:root.child('bots'), cfg:root.child('cfg'), nb:0, myBots:[], botRoster:new Map(), stateRef:root.child('state'), mine:base.child(myId), conn:db.ref('.info/connected'), connected:false, acc:0, beat:0, sent:null,
         remotes:new Map(), handlers:[], roster:new Map(), round:0, mode:'lobby', startCount:0, t0:0, j:Date.now(),
-        nick:cleanNick(elNick.value)||'Khách', chatSeen:new Map(), lastChat:0 };
+        nick:cleanNick(elNick.value)||'Khách', chatSeen:new Map(), lastChat:0, kills:[], who:{} };
   clearChat(); closeChat();
   newRoundOnline(null);                                // nhân vật tạm của mình, chưa vào đấu trường
   const on=(ref,ev,fn)=>{ const f=guard(fn); ref.on(ev,f); net.handlers.push([ref,ev,f]); };
@@ -1504,7 +1532,7 @@ function doJoin(code,db,root){
     if (!d||typeof d!=='object') return;
     net.botRoster.set(id,d);
     const lb=net.myBots.find(b=>b.id===id);
-    if (lb){ if (d.a===0&&lb.alive&&!over) eliminate(lb,NETK); return; }   // bot của mình bị người khác gõ đúng tên
+    if (lb){ if (d.a===0&&lb.alive&&!over){ netKillerId=d.kb||null; eliminate(lb,NETK); netKillerId=null; } return; }   // bot của mình bị người khác gõ đúng tên
     netChange(id,d);
   };
   on(net.bots,'child_added',s=>botEvt(s.key,s.val()));
@@ -1554,6 +1582,7 @@ function newRoundOnline(spawn){
     target:null, threatPos:null, crouch:false, y:0, vy:0, grounded:true, wallT:0, ck:0, spd:0, px:x, pz:z, stepD:0, heard:null, running:false, aggr:0.5, readNeed:1
   }, ch);
   players=[me,...remotes]; human=me;
+  if (net) net.who[myId]={ nick:net.nick, name, bot:false };
   wallWarned=false; elWall.style.display='none';
   updateAlive();
   netFull();
@@ -1567,11 +1596,13 @@ function addRemote(id,d){
     deathT:alive?0:10, read:{}, crouch:!!d.c, vy:0, grounded:true, wallT:0, ck:d.c?1:0, spd:0, px:x, pz:z, stepD:0, running:false, heard:null
   }, ch);
   if (!alive){ p.tag.visible=false; p.body.material.color.set(0x777777); }
+  net.who[id]={ nick:p.nick, name:d.n, bot:!!d.bt };
   players.push(p); net.remotes.set(id,p); if (!p.bot) net.met=(net.met||0)+1;     // met: số người thật đã gặp
   updateAlive();
 }
 function removeRemote(id,quiet){
   const p=net&&net.remotes.get(id); if (!p) return;
+  if (net.mode==='game'&&!over&&p.alive&&!p.bot&&net.kills) net.kills.push({ k:'left', v:String(p.id) });     // rời phòng giữa ván
   scene.remove(p.group); p.tex.dispose();
   players=players.filter(q=>q!==p); net.remotes.delete(id);
   if (spectate===p) spectate=null;
@@ -1581,7 +1612,7 @@ function removeRemote(id,quiet){
 function netChange(id,d){
   if (!net||!d||typeof d!=='object') return;
   if (id===myId){                                       // người khác đã gõ đúng tên mình
-    if (d.a===0&&net.mode==='game'&&human&&human.alive&&!over) eliminate(human,NETK);
+    if (d.a===0&&net.mode==='game'&&human&&human.alive&&!over){ netKillerId=d.kb||null; eliminate(human,NETK); netKillerId=null; }
     return;
   }
   const inArena=net.mode==='game'&&d.w===0&&d.r===net.round&&validName(d.n);
@@ -1589,31 +1620,57 @@ function netChange(id,d){
   if (!inArena){ if (p) removeRemote(id,false); return; }       // chưa vào ván này, hoặc đã rời đấu trường
   if (!p){ addRemote(id,d); return; }
   if (d.n!==p.name){ removeRemote(id,true); addRemote(id,d); return; }
-  if (d.a===0&&p.alive) eliminate(p,NETK);
+  if (d.a===0&&p.alive){ netKillerId=d.kb||null; eliminate(p,NETK); netKillerId=null; }
   p.tx=num(d.x); p.tz=num(d.z); p.ty=num(d.y); p.th=num(d.h); p.tc=!!d.c; p.scope=!!d.b; p.last=performance.now();
   if (d.nk) p.nick=cleanNick(d.nk)||p.nick;
 }
 function netEliminated(v,k){
   if (k===NETK) return;                                             // do máy khác báo: không báo lại
-  if (v.remote){ if (k===human||(k&&k.bot&&!k.remote)) (v.bot?net.bots:net.base).child(v.id).update({a:0}); }   // mình hoặc bot của mình gõ đúng tên họ
-  else if (v===human) net.mine.update({a:0});                      // mình bị Admin hoặc bot của chủ phòng loại
-  else if (v.bot) net.bots.child(v.id).update({a:0});             // bot của mình bị loại
+  const kb=killerId(k), upd=kb?{a:0,kb}:{a:0};
+  if (v.remote){ if (k===human||(k&&k.bot&&!k.remote)) (v.bot?net.bots:net.base).child(v.id).update(upd); }   // mình hoặc bot của mình gõ đúng tên họ
+  else if (v===human) net.mine.update(upd);                        // mình bị Admin hoặc bot của chủ phòng loại
+  else if (v.bot) net.bots.child(v.id).update(upd);               // bot của mình bị loại
+}
+function buildBoard(w){          // bảng xếp hạng cuối trận: chỉ người chơi thật, số hạ tính cả bot nhưng chỉ ghi tên người
+  const who=net.who, ev=net.kills, wid=w?String(w.id):null, rows=[];
+  for (const id of Object.keys(who)){
+    if (who[id].bot) continue;
+    const mine=ev.filter(e=>e.k===id), vics=mine.map(e=>e.v).filter(v=>who[v]&&!who[v].bot).map(v=>who[v].nick);
+    const di=ev.findIndex(e=>e.v===id);
+    rows.push({ id, nick:who[id].nick, num:who[id].name, kills:mine.length, vics, d:di<0?null:ev[di], at:di<0?1e9:di });
+  }
+  rows.sort((a,b)=>((b.id===wid)-(a.id===wid))||(b.kills-a.kills)||(b.at-a.at));
+  return rows.map((r,i)=>{
+    const win=r.id===wid; let by='';
+    if (!win&&r.d){
+      const k=r.d.k;
+      by = k==='admin' ? ' · <span class="adm">bị Admin loại</span>' : k==='left' ? ' · <span class="by">đã rời phòng</span>'
+         : (who[k]&&!who[k].bot) ? ` · <span class="by">bị ${esc(who[k].nick)} hạ</span>` : k ? ' · <span class="by">bị bot hạ</span>' : ' · <span class="by">bị loại</span>';
+    }
+    const kt=r.kills ? `<b>hạ ${r.kills}</b>`+(r.vics.length?` (trong đó có ${r.vics.map(esc).join(', ')})`:'') : 'chưa hạ ai';
+    return `<div class="brow${win?' win':''}${r.id===myId?' me':''}"><div class="rk">${win?'🏆':i+1}</div><div class="bn">${esc(r.nick)}<small>[${r.num}]</small>${r.id===myId?' <small>(bạn)</small>':''}</div><div class="bi">${kt}${by}</div></div>`;
+  }).join('');
 }
 function netCheckEnd(){
   if (!net||over||!human||net.mode!=='game') return;
-  const alive=players.filter(p=>p.alive);
-  if (players.length>=2&&alive.length<=1) endGame(alive[0]||null);
-  else if (players.length===1&&human.alive&&net.met>0) endGame(human);          // những người từng có mặt đều đã rời
+  const hs=players.filter(p=>!p.bot), alive=hs.filter(p=>p.alive);          // online: chỉ người thật được tính, bot không
+  if (hs.length>=2&&alive.length<=1){
+    let w=alive[0]||null;
+    if (!w){ for (let i=net.kills.length-1;i>=0&&!w;i--){ const q=hs.find(p=>String(p.id)===net.kills[i].v); if (q) w=q; } }   // cùng bị loại: người bị loại muộn nhất thắng
+    endGame(w);
+  }
+  else if (hs.length===1&&human.alive&&net.met>0) endGame(human);          // những người thật từng có mặt đều đã rời
 }
 function updateRemotes(dt){
-  const k=1-Math.exp(-dt*14), now=performance.now();
+  const k=1-Math.exp(-dt*14), now=performance.now(); let staleGone=false;
   for (const p of [...net.remotes.values()]){
-    if (now-p.last>NET_STALE){ removeRemote(p.id,true); continue; }
+    if (now-p.last>NET_STALE){ removeRemote(p.id,true); staleGone=true; continue; }
     if (!p.alive) continue;
     p.x+=(p.tx-p.x)*k; p.z+=(p.tz-p.z)*k; p.y+=(p.ty-p.y)*k; p.h+=angDiff(p.h,p.th)*k; p.crouch=p.tc;
     const was=p.grounded; p.grounded=(p.y-floorAt(p.x,p.z,p.y))<0.06;
     if (!p.grounded) p.air+=dt; else { if (!was&&p.air>0.3) landed(p); p.air=0; }
   }
+  if (staleGone) netCheckEnd();
   if (!over&&net.mode==='game'&&players.filter(q=>!q.bot).length===1&&net.met===0&&net.startCount>1&&now-net.t0>8000) cancelRound();   // những người cùng ván không bao giờ vào
 }
 function cancelRound(){                    // không ai khác vào được: hủy ván, về phòng chờ (không bao giờ chơi một mình)
